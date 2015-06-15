@@ -16,12 +16,37 @@
     <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <LinearLayout android:id="@+id/fullscreen_content_controls" style="?metaButtonBarStyle"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay" android:orientation="horizontal"
-            tools:ignore="UselessParent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editText"
+                    android:elegantTextHeight="false"
+                    android:fontFamily="@string/abc_action_bar_home_description"
+                    android:text="Panoramic video (surround video, spherical video, 360 video) is the new dimension to viewing and experiencing video! With interactivity at its core, 360 video provides plenty opportunity for exploration, simulation, training and total immersion."
+                    android:minLines="5"
+                    android:textColor="#ff3cff80"
+                    android:layout_margin="10dp"
+                    android:autoLink="none"
+                    android:background="#ffffffff"
+                    android:singleLine="false"
+                    android:visibility="visible"
+                    android:textIsSelectable="false"
+                    android:textAlignment="center"
+                    android:inputType="textMultiLine"
+                    android:scrollbars="vertical"/>
+            </LinearLayout>
         </LinearLayout>
     </FrameLayout>
 
