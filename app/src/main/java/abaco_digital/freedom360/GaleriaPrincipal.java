@@ -58,7 +58,7 @@ public class GaleriaPrincipal extends Activity {
 
         setContentView(R.layout.activity_galeria_principal);*/
 
-        final View controlsView = findViewById(R.id.fullscreen_content_controls);
+        //final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
 
         // Set up an instance of SystemUiHider to control the system UI for
@@ -74,7 +74,7 @@ public class GaleriaPrincipal extends Activity {
                     @Override
                     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
                     public void onVisibilityChange(boolean visible) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+                      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
                             // If the ViewPropertyAnimator API is available
                             // (Honeycomb MR2 and later), use it to animate the
                             // in-layout UI controls at the bottom of the
@@ -94,7 +94,7 @@ public class GaleriaPrincipal extends Activity {
                             // available, simply show or hide the in-layout UI
                             // controls.
                             controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
-                        }
+                        }*/
 
                         if (visible) {
                             // Schedule a hide().

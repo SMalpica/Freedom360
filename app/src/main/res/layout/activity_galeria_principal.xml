@@ -45,7 +45,8 @@
                     android:textIsSelectable="false"
                     android:textAlignment="center"
                     android:inputType="textMultiLine"
-                    android:scrollbars="vertical"/>
+                    android:scrollbars="vertical"
+                    android:textSize="18dp" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
