@@ -6,38 +6,35 @@
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
-    <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#33b5e5"
-        android:textStyle="bold" android:textSize="50sp" android:gravity="center"
-        android:text="@string/dummy_content" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
     <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:background="#ffaeaeae">
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center">
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="396dp"
+                    android:layout_height="182dp"
                     android:id="@+id/editText"
                     android:elegantTextHeight="false"
                     android:fontFamily="@string/abc_action_bar_home_description"
                     android:text="Panoramic video (surround video, spherical video, 360 video) is the new dimension to viewing and experiencing video! With interactivity at its core, 360 video provides plenty opportunity for exploration, simulation, training and total immersion."
                     android:minLines="5"
                     android:textColor="#ff3cff80"
-                    android:layout_margin="10dp"
                     android:autoLink="none"
                     android:background="#ffffffff"
                     android:singleLine="false"
@@ -46,9 +43,70 @@
                     android:textAlignment="center"
                     android:inputType="textMultiLine"
                     android:scrollbars="vertical"
-                    android:textSize="18dp" />
+                    android:textSize="19dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="0dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="7dp"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageView"
+                    android:src="@drawable/gopros"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="0dp" />
+
             </LinearLayout>
+
+
+
+
         </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal|top"
+            android:background="#ff000000">
+
+            <ImageView
+                android:layout_width="125dp"
+                android:layout_height="60dp"
+                android:id="@+id/imageView2"
+                android:src="@drawable/freedom360"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="0dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spherical Video PLayer"
+                android:id="@+id/textView"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="15dp"
+                android:autoText="false"
+                android:background="#ff000000"
+                android:gravity="bottom|right"
+                android:inputType="text"
+                android:lines="1"
+                android:textAlignment="gravity"
+                android:textColor="#ff3cff80"
+                android:textSize="22dp"
+                android:layout_marginTop="34dp" />
+        </LinearLayout>
+
     </FrameLayout>
 
 </FrameLayout>

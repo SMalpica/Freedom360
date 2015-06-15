@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 
 /**
@@ -60,6 +61,7 @@ public class GaleriaPrincipal extends Activity {
 
         //final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
+
 
         // Set up an instance of SystemUiHider to control the system UI for
         // this activity.
