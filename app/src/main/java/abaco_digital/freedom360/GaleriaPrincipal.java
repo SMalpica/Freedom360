@@ -60,7 +60,7 @@ public class GaleriaPrincipal extends Activity {
         setContentView(R.layout.activity_galeria_principal);*/
 
         //final View controlsView = findViewById(R.id.fullscreen_content_controls);
-        final View contentView = findViewById(R.id.fullscreen_content);
+        final View contentView = findViewById(android.R.id.content);
 
 
         // Set up an instance of SystemUiHider to control the system UI for
