@@ -21,6 +21,45 @@
 
             <LinearLayout
                 android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center_horizontal|top"
+                android:background="#ff000000">
+
+                <ImageView
+                    android:layout_width="125dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/imageView2"
+                    android:src="@drawable/freedom360"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Spherical Video PLayer"
+                    android:id="@+id/textView"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="15dp"
+                    android:autoText="false"
+                    android:background="#ff000000"
+                    android:gravity="bottom|right"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:textAlignment="gravity"
+                    android:textColor="#ff3cff80"
+                    android:textSize="22dp"
+                    android:layout_marginTop="34dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -63,50 +102,20 @@
 
             </LinearLayout>
 
-
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_gravity="center_horizontal|top"
-            android:background="#ff000000">
-
-            <ImageView
-                android:layout_width="125dp"
-                android:layout_height="60dp"
-                android:id="@+id/imageView2"
-                android:src="@drawable/freedom360"
-                android:layout_marginLeft="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="0dp" />
-
-            <TextView
+            <HorizontalScrollView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Spherical Video PLayer"
-                android:id="@+id/textView"
-                android:layout_marginBottom="5dp"
-                android:layout_marginRight="15dp"
-                android:autoText="false"
-                android:background="#ff000000"
-                android:gravity="bottom|right"
-                android:inputType="text"
-                android:lines="1"
-                android:textAlignment="gravity"
-                android:textColor="#ff3cff80"
-                android:textSize="22dp"
-                android:layout_marginTop="34dp" />
+                android:id="@+id/horizontalScrollView"
+                android:background="@drawable/espacio"
+                android:layout_margin="10dp" />
+
+
         </LinearLayout>
 
+
+
     </FrameLayout>
+
+
 
 </FrameLayout>
