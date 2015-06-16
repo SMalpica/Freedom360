@@ -8,10 +8,15 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.view.Display;
+import android.widget.TextView;
 
 
 /**
@@ -117,6 +122,18 @@ public class GaleriaPrincipal extends Activity {
             }
         });
 
+        //MEDIMOS LA PANTALLA
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        //ASIGNAMOS MEDIANTE ID EL LAYOUT
+        LinearLayout layoutcentral =(LinearLayout)findViewById(R.id.layoutCentral);
+        HorizontalScrollView inferior =(HorizontalScrollView)findViewById(R.id.horizontalScrollView);
+        //2 quintos para el layout central
+        //otros dos quintos para el inferior
+        layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/5;
+        inferior.getLayoutParams().height=outMetrics.heightPixels*2/5;
+        //forzar que la imagen y el texto del layout central sean igual de altos
 
     }
 
