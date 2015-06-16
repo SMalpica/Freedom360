@@ -46,12 +46,12 @@ public class GaleriaPrincipal extends Activity {
      * If set, will toggle the system UI visibility upon interaction. Otherwise,
      * will show the system UI visibility upon interaction.
      */
-    private static final boolean TOGGLE_ON_CLICK = true;
+    private static final boolean TOGGLE_ON_CLICK = false;
 
     /**
      * The flags to pass to {@link SystemUiHider#getInstance}.
      */
-    private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+    private static final int HIDER_FLAGS = SystemUiHider.FLAG_FULLSCREEN;
 
     /**
      * The instance of the {@link SystemUiHider} for this activity.
@@ -72,11 +72,14 @@ public class GaleriaPrincipal extends Activity {
         final View contentView = findViewById(android.R.id.content);
 
 
+        contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE);
+        // This example uses decor view, but you can use any visible view.
+
         // Set up an instance of SystemUiHider to control the system UI for
         // this activity.
-        mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
-        mSystemUiHider.setup();
-        mSystemUiHider
+        //mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
+        //mSystemUiHider.setup();
+        /*mSystemUiHider
                 .setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
                     // Cached values.
                     int mControlsHeight;
@@ -105,26 +108,28 @@ public class GaleriaPrincipal extends Activity {
                             // available, simply show or hide the in-layout UI
                             // controls.
                             controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
-                        }*/
+                        }
 
                         if (visible) {
                             // Schedule a hide().
-                            delayedHide(AUTO_HIDE_DELAY_MILLIS);
+                            delayedHide(1);
+                            //delayedHide(AUTO_HIDE_DELAY_MILLIS);
                         }
                     }
-                });
+                });*/
 
         // Set up the user interaction to manually show or hide the system UI.
-        contentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (TOGGLE_ON_CLICK) {
-                    mSystemUiHider.toggle();
-                } else {
-                    mSystemUiHider.show();
-                }
-            }
-        });
+//        contentView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (TOGGLE_ON_CLICK) {
+//                    mSystemUiHider.hide();
+//                } else {
+//                    //mSystemUiHider.show();
+//                    mSystemUiHider.hide();
+//                }
+//            }
+//        });
 
         //MEDIMOS LA PANTALLA
         Display display = getWindowManager().getDefaultDisplay();
@@ -140,7 +145,7 @@ public class GaleriaPrincipal extends Activity {
         //2 quintos para el layout central
         //otros dos quintos para el inferior
         //layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/6;
-        layoutsuperior.getLayoutParams().height=outMetrics.heightPixels*1/6;
+        layoutsuperior.getLayoutParams().height=outMetrics.heightPixels/6;
         inferior.getLayoutParams().height=outMetrics.heightPixels*3/6-10;
         //forzar que la imagen y el texto del layout central sean igual de altos
         //en xml
@@ -185,7 +190,7 @@ public class GaleriaPrincipal extends Activity {
     Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
-            mSystemUiHider.hide();
+            //mSystemUiHider.hide();
         }
     };
 
