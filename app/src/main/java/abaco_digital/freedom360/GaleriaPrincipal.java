@@ -5,6 +5,7 @@ import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.Display;
 import android.widget.TextView;
+import android.graphics.Bitmap;
 
 
 /**
@@ -128,13 +130,20 @@ public class GaleriaPrincipal extends Activity {
         display.getMetrics(outMetrics);
         //ASIGNAMOS MEDIANTE ID EL LAYOUT
         LinearLayout layoutcentral =(LinearLayout)findViewById(R.id.layoutCentral);
+        LinearLayout layoutsuperior =(LinearLayout)findViewById(R.id.layoutSuperior);
         HorizontalScrollView inferior =(HorizontalScrollView)findViewById(R.id.horizontalScrollView);
         //2 quintos para el layout central
         //otros dos quintos para el inferior
-        layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/5;
-        inferior.getLayoutParams().height=outMetrics.heightPixels*2/5;
+        layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/6;
+        layoutsuperior.getLayoutParams().height=outMetrics.heightPixels*1/6;
+        inferior.getLayoutParams().height=outMetrics.heightPixels*3/6;
         //forzar que la imagen y el texto del layout central sean igual de altos
         //en xml
+        //TextView texto = (TextView)findViewById(R.id.editText);
+        //ImageView camaras = (ImageView)findViewById(R.id.imageView);
+        //BitmapDrawable imagen = (BitmapDrawable)camaras.getDrawable();
+        //int altura = imagen.getBitmap().getHeight();
+        //texto.getLayoutParams().height=altura;
     }
 
     @Override
