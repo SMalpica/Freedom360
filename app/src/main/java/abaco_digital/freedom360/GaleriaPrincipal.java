@@ -134,7 +134,7 @@ public class GaleriaPrincipal extends Activity {
         layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/5;
         inferior.getLayoutParams().height=outMetrics.heightPixels*2/5;
         //forzar que la imagen y el texto del layout central sean igual de altos
-
+        //en xml
     }
 
     @Override
