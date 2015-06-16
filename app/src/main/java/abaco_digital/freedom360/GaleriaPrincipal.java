@@ -4,6 +4,7 @@ import abaco_digital.freedom360.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Application;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -40,41 +41,49 @@ public class GaleriaPrincipal extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
+        getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        final View contentView = findViewById(android.R.id.content);
+        contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE);
+        //use different layouts depending on the screen size
+        if(auxiliar.isTablet(getApplicationContext())){
             setContentView(R.layout.activity_galeria_principal);
-            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            //MEDIMOS LA PANTALLA
+            Display display = getWindowManager().getDefaultDisplay();
+            DisplayMetrics outMetrics = new DisplayMetrics();
+            //display.getMetrics(outMetrics);
+            display.getMetrics(outMetrics);
+            Point out = new Point();
+            display.getSize(out);
+            //ASIGNAMOS MEDIANTE ID EL LAYOUT
+            //LinearLayout layoutcentral =(LinearLayout)findViewById(R.id.layoutCentral);
+            LinearLayout layoutsuperior =(LinearLayout)findViewById(R.id.layoutSuperior);
+            LinearLayout inferior =(LinearLayout)findViewById(R.id.horizontalScrollView);
+            //2 quintos para el layout central
+            //otros dos quintos para el inferior
+            //layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/6;
+            layoutsuperior.getLayoutParams().height=outMetrics.heightPixels/6;
+            inferior.getLayoutParams().height=outMetrics.heightPixels*3/6-10;
+            //forzar que la imagen y el texto del layout central sean igual de altos
+            //en xml
+            TextView texto = (TextView)findViewById(R.id.editText);
+            texto.setMaxHeight(outMetrics.heightPixels * 2 / 6);
+        }else{
+            setContentView(R.layout.movil_galeria_principal);
+        }
+
+
+
         /*super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_galeria_principal);*/
 
         //final View controlsView = findViewById(R.id.fullscreen_content_controls);
-        final View contentView = findViewById(android.R.id.content);
 
 
-        contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE);
 
 
-        //MEDIMOS LA PANTALLA
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        //display.getMetrics(outMetrics);
-        display.getMetrics(outMetrics);
-        Point out = new Point();
-        display.getSize(out);
-        //ASIGNAMOS MEDIANTE ID EL LAYOUT
-        //LinearLayout layoutcentral =(LinearLayout)findViewById(R.id.layoutCentral);
-        LinearLayout layoutsuperior =(LinearLayout)findViewById(R.id.layoutSuperior);
-        LinearLayout inferior =(LinearLayout)findViewById(R.id.horizontalScrollView);
-        //2 quintos para el layout central
-        //otros dos quintos para el inferior
-        //layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/6;
-        layoutsuperior.getLayoutParams().height=outMetrics.heightPixels/6;
-        inferior.getLayoutParams().height=outMetrics.heightPixels*3/6-10;
-        //forzar que la imagen y el texto del layout central sean igual de altos
-        //en xml
-        TextView texto = (TextView)findViewById(R.id.editText);
-        texto.setMaxHeight(outMetrics.heightPixels * 2 / 6);
     }
 
     @Override

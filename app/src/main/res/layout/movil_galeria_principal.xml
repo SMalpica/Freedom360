@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="#ffaeaeae">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="10dp"
+        android:background="#ff000000"
+        android:id="@+id/layoutSuperior"
+        android:gravity="bottom|right"
+        >
+
+        <ImageView
+            android:layout_weight="1"
+            android:gravity="left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView2"
+            android:src="@drawable/freedom360"
+            android:scaleType="fitStart"/>
+
+        <TextView
+            android:gravity="bottom|right"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Spherical Video Player"
+            android:id="@+id/textView"
+            android:background="#ff000000"
+            android:lines="1"
+            android:textColor="#ff3cff80"
+            android:textSize="26sp"
+            android:padding="10dp"
+            />
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/horizontalScrollView"
+        android:background="@drawable/espacio" >
+        <HorizontalScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/espacio"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Video aqui"
+                android:textColor="#ff000000" />
+            </HorizontalScrollView>
+    </LinearLayout>
+
+</LinearLayout>
