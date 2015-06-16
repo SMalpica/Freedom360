@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.Display;
 import android.widget.TextView;
+import android.graphics.Point;
 import android.graphics.Bitmap;
 
 
@@ -127,19 +129,26 @@ public class GaleriaPrincipal extends Activity {
         //MEDIMOS LA PANTALLA
         Display display = getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
+        //display.getMetrics(outMetrics);
         display.getMetrics(outMetrics);
+        Point out = new Point();
+        display.getSize(out);
         //ASIGNAMOS MEDIANTE ID EL LAYOUT
-        LinearLayout layoutcentral =(LinearLayout)findViewById(R.id.layoutCentral);
+        //LinearLayout layoutcentral =(LinearLayout)findViewById(R.id.layoutCentral);
         LinearLayout layoutsuperior =(LinearLayout)findViewById(R.id.layoutSuperior);
-        HorizontalScrollView inferior =(HorizontalScrollView)findViewById(R.id.horizontalScrollView);
+        LinearLayout inferior =(LinearLayout)findViewById(R.id.horizontalScrollView);
         //2 quintos para el layout central
         //otros dos quintos para el inferior
-        layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/6;
+        //layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/6;
         layoutsuperior.getLayoutParams().height=outMetrics.heightPixels*1/6;
-        inferior.getLayoutParams().height=outMetrics.heightPixels*3/6;
+        inferior.getLayoutParams().height=outMetrics.heightPixels*3/6-10;
         //forzar que la imagen y el texto del layout central sean igual de altos
         //en xml
-        //TextView texto = (TextView)findViewById(R.id.editText);
+        TextView texto = (TextView)findViewById(R.id.editText);
+        texto.setMaxHeight(outMetrics.heightPixels * 2 / 6);
+        Drawable editTextDrawable = ((TextView) findViewById(R.id.editText)).getCompoundDrawables()[0];
+
+        //editTextDrawable.setBounds(0, 0, editTextDrawable.getIntrinsicWidth(), editTextDrawable.getIntrinsicHeight());
         //ImageView camaras = (ImageView)findViewById(R.id.imageView);
         //BitmapDrawable imagen = (BitmapDrawable)camaras.getDrawable();
         //int altura = imagen.getBitmap().getHeight();

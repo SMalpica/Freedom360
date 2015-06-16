@@ -14,7 +14,8 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -48,25 +49,51 @@
                     android:background="#ff000000"
                     android:lines="1"
                     android:textColor="#ff3cff80"
-                    android:textSize="26dp"
+                    android:textSize="26sp"
+                    android:padding="10dp"
                     />
             </LinearLayout>
 
 
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/editText"
+                    android:fontFamily="@string/abc_action_bar_home_description"
+                    android:text="Panoramic video (surround video, spherical video, 360 video) is the new dimension to viewing and experiencing video! With interactivity at its core, 360 video provides plenty opportunity for exploration, simulation, training and total immersion."
+                    android:minLines="5"
+                    android:textColor="#ff3cff80"
+                    android:autoLink="none"
+                    android:background="#ffffffff"
+                    android:singleLine="false"
+                    android:visibility="visible"
+                    android:textIsSelectable="false"
+                    android:inputType="textMultiLine"
+                    android:scrollbars="vertical"
+                    android:textSize="19sp"
+                    android:paddingLeft="13dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="7dp"
+                    android:drawableRight="@drawable/gopros"
+                    android:drawablePadding="10dp"/>
+            <!--
             <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/layoutCentral">
-
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                     <TextView
-                        android:layout_weight="4"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:layout_toLeftOf="@+id/imageView"
-                        android:layout_alignTop="@+id/imageView"
-                        android:layout_alignBottom="@+id/imageView"
+                        android:layout_width="wrap_content"
                         android:id="@+id/editText"
-                        android:elegantTextHeight="false"
                         android:fontFamily="@string/abc_action_bar_home_description"
                         android:text="Panoramic video (surround video, spherical video, 360 video) is the new dimension to viewing and experiencing video! With interactivity at its core, 360 video provides plenty opportunity for exploration, simulation, training and total immersion."
                         android:minLines="5"
@@ -78,7 +105,7 @@
                         android:textIsSelectable="false"
                         android:inputType="textMultiLine"
                         android:scrollbars="vertical"
-                        android:textSize="19dp"
+                        android:textSize="19sp"
                         android:padding="13dp"
                         android:lineSpacingMultiplier="1.2"
                         android:layout_marginLeft="10dp"
@@ -86,13 +113,16 @@
                         android:layout_marginBottom="10dp"
                         android:layout_marginRight="0dp"
                         android:paddingTop="10dp"
-                        android:paddingBottom="7dp" />
-
+                        android:paddingBottom="7dp"
+                        android:drawableRight="@drawable/gopros"/>
+                    android:layout_weight="4"
                     <ImageView
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
+                        android:gravity="left"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_toRightOf="@+id/editText"
+                        android:layout_alignTop="@+id/editText"
+                        android:layout_alignBottom="@+id/editText"
                         android:id="@+id/imageView"
                         android:src="@drawable/gopros"
                         android:layout_marginTop="10dp"
@@ -100,22 +130,24 @@
                         android:layout_marginBottom="10dp"
                         android:layout_marginLeft="0dp"
                          />
+                    android:layout_weight="1"
+                </RelativeLayout>
+            </LinearLayout>-->
 
-            </LinearLayout>
-
-
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/horizontalScrollView"
-                android:background="@drawable/espacio"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
-                />
-
-
+                android:id="@+id/horizontalScrollView"
+                android:background="@drawable/espacio" >
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    />
+            </LinearLayout>
         </LinearLayout>
 
 
