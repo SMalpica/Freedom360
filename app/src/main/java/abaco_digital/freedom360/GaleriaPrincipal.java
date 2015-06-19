@@ -1,7 +1,5 @@
 package abaco_digital.freedom360;
 //TODO: encontrar fuente con serif distinta de times new roman
-//TODO: resolver fallo imagen horizontalScroll no se muestra en mi movil
-//TODO: probar con distintas resoluciones
 //TODO: utilizar constantes string en vez de poner el string en el layout xml directamente
 import abaco_digital.freedom360.util.SystemUiHider;
 
