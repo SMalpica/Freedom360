@@ -50,13 +50,13 @@
                     android:background="#ff000000"
                     android:lines="1"
                     android:textColor="#ff3cff80"
-                    android:textSize="26sp"
+                    android:textSize="28dp"
                     android:padding="10dp"
                     />
             </LinearLayout>
 
 
-                <TextView
+                <abaco_digital.freedom360.AutoResizeTextView
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:id="@+id/editText"
@@ -70,7 +70,6 @@
                     android:textIsSelectable="false"
                     android:inputType="textMultiLine"
                     android:scrollbars="vertical"
-                    android:textSize="19sp"
                     android:paddingLeft="13dp"
                     android:lineSpacingMultiplier="1.2"
                     android:layout_marginLeft="10dp"
@@ -80,9 +79,13 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="7dp"
                     android:drawableRight="@drawable/gopros"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:textSize="35sp"
+
+                    />
             <!--
             <LinearLayout
+            android:textAppearance="?android:attr/text"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

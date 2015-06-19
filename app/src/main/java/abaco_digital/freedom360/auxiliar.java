@@ -1,8 +1,11 @@
 package abaco_digital.freedom360;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by android on 16/06/2015.
@@ -26,6 +29,54 @@ public class auxiliar {
             Log.e("LOG", "Failed to compute screen size", t);
             return false;
         }
+
+    }
+
+    /**
+     * returns the device screen's inches
+     * @param context
+     * @return
+     */
+    public static double getPulgadas (Context context){
+        try{
+            //compute screen size
+            DisplayMetrics dm = context.getResources().getDisplayMetrics();
+            float screenWidth = dm.widthPixels / dm.xdpi;
+            float screenHeight = dm.heightPixels / dm.ydpi;
+            double size = Math.sqrt(Math.pow(screenWidth,2)+Math.pow(screenHeight,2));
+            return size;
+        }catch(Throwable t){
+            Log.e("LOG", "Failed to compute screen size", t);
+            return -1;
+        }
+    }
+
+    public static double getCentimetros (Context context){
+        double pulg = getPulgadas(context);
+        return pulg*2.54;
+    }
+
+/*  No funciona!!
+    public static double getFuente (Context context){
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float screenWidth = dm.widthPixels / dm.xdpi;
+        float screenHeight = dm.heightPixels / dm.ydpi;
+        double menor;
+        if(screenWidth <= screenHeight){
+            menor = screenWidth;
+        }else{
+            menor=screenHeight;
+        }
+        //obtener taman fuente
+        return menor*50/1760;
+    }*/
+    public static void setFuente (TextView textView){
+        //obtain the views size
+        textView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int widht = textView.getMeasuredWidth();
+        int height = textView.getMeasuredHeight();
+        Rect out = new Rect();
+        textView.getDrawingRect(out);
 
     }
 }

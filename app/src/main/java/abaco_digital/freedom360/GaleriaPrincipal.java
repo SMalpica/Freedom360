@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -60,8 +61,6 @@ public class GaleriaPrincipal extends Activity {
             DisplayMetrics outMetrics = new DisplayMetrics();
             //display.getMetrics(outMetrics);
             display.getMetrics(outMetrics);
-            Point out = new Point();
-            display.getSize(out);
             //ASIGNAMOS MEDIANTE ID EL LAYOUT
             //LinearLayout layoutcentral =(LinearLayout)findViewById(R.id.layoutCentral);
             LinearLayout layoutsuperior =(LinearLayout)findViewById(R.id.layoutSuperior);
@@ -70,15 +69,22 @@ public class GaleriaPrincipal extends Activity {
             //otros dos quintos para el inferior
             //layoutcentral.getLayoutParams().height=outMetrics.heightPixels*2/6;
             layoutsuperior.getLayoutParams().height=outMetrics.heightPixels/6;
-            inferior.getLayoutParams().height=outMetrics.heightPixels*3/6-10;
+            inferior.getLayoutParams().height=outMetrics.heightPixels*3/6;
             //forzar que la imagen y el texto del layout central sean igual de altos
             //en xml
             //tipografia tipo serif
             TextView texto = (TextView)findViewById(R.id.editText);
-            texto.setMaxHeight(outMetrics.heightPixels * 2 / 6);
+            texto.setMaxHeight(outMetrics.heightPixels * 2 / 6); //en teoria tam del textview
+//            double unidadAltura = outMetrics.heightPixels * 2 / 6;
+//            unidadAltura = unidadAltura / 7; //fontsize
             texto.setTypeface(face);
+            auxiliar.setFuente(texto);
+//            unidadAltura=auxiliar.getFuente(getApplicationContext());
+//            texto.setTextSize(TypedValue.COMPLEX_UNIT_IN,(float)unidadAltura);
+            //texto.setTextSize(unidadAltura);
             texto=(TextView)findViewById(R.id.textView);
             texto.setTypeface(face);
+
         }else{
             setContentView(R.layout.movil_galeria_principal);
             TextView texto = (TextView)findViewById(R.id.textView);
