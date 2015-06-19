@@ -10,7 +10,7 @@
         android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginRight="0dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="0dp"
         android:background="#ff000000"
         android:id="@+id/layoutSuperior"
         android:gravity="bottom|right"
@@ -30,7 +30,7 @@
             android:layout_weight="2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Spherical Video Player"
+            android:text="@string/titulo_principal"
             android:id="@+id/textView"
             android:background="#ff000000"
             android:lines="1"
@@ -43,27 +43,32 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
-        android:id="@+id/horizontalScrollView"
-        android:background="@drawable/espacio" >
+
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/espacio"
+            android:scaleType="centerCrop"/>
         <HorizontalScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/espacio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/horizontalScrollView"
             android:visibility="visible"
-            >
+            ><!--android:background="@drawable/espacio"-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Video aqui"
                 android:textColor="#ff000000" />
             </HorizontalScrollView>
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

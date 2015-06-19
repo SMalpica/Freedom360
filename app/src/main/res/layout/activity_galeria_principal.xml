@@ -37,14 +37,15 @@
                     android:layout_height="match_parent"
                     android:id="@+id/imageView2"
                     android:src="@drawable/freedom360"
-                    android:scaleType="fitStart"/>
+                    android:scaleType="fitStart"
+                    android:contentDescription="@string/legend_icono" />
 
                 <TextView
                     android:gravity="bottom|right"
                     android:layout_weight="2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Spherical Video Player"
+                    android:text="@string/titulo_principal"
                     android:id="@+id/textView"
                     android:background="#ff000000"
                     android:lines="1"
@@ -60,7 +61,7 @@
                     android:layout_width="wrap_content"
                     android:id="@+id/editText"
                     android:fontFamily="@string/abc_action_bar_home_description"
-                    android:text="Panoramic video (surround video, spherical video, 360 video) is the new dimension to viewing and experiencing video! With interactivity at its core, 360 video provides plenty opportunity for exploration, simulation, training and total immersion."
+                    android:text="@string/descripcion"
                     android:minLines="5"
                     android:textColor="#ff3cff80"
                     android:autoLink="none"

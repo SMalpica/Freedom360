@@ -1,19 +1,22 @@
 package abaco_digital.freedom360;
 //TODO: encontrar fuente con serif distinta de times new roman
-//TODO: utilizar constantes string en vez de poner el string en el layout xml directamente
+//TODO: intentar que el fondo del scroll escale a las proporciones de la imagen
+//TODO: anyadir sombras al horizontalScroll o a las descripciones
 import abaco_digital.freedom360.util.SystemUiHider;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.view.Display;
 import android.widget.TextView;
@@ -41,6 +44,7 @@ public class GaleriaPrincipal extends Activity {
 
 
     @Override
+    @TargetApi(21)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -72,6 +76,19 @@ public class GaleriaPrincipal extends Activity {
             texto.setMaxHeight(outMetrics.heightPixels * 2 / 6);
         }else{
             setContentView(R.layout.movil_galeria_principal);
+            //hacer que el scroll sea del tamaño del fondo para que no se deforme
+            //usar distintos metodos dependiendo de la api
+//            HorizontalScrollView horizontal = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
+//            int sdk = android.os.Build.VERSION.SDK_INT;
+//            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+//                horizontal.setBackgroundDrawable( getResources().getDrawable(R.drawable.espacio) );
+//            } else if (sdk < 22){
+//                horizontal.setBackground( getResources().getDrawable(R.drawable.espacio));
+//            } else{
+//                Drawable d = getResources().getDrawable(R.drawable.espacio,null);
+//                horizontal.setBackground(d);
+//            }
+
         }
 
 
