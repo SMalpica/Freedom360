@@ -60,7 +60,6 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:id="@+id/editText"
-                    android:fontFamily="@string/abc_action_bar_home_description"
                     android:text="@string/descripcion"
                     android:minLines="5"
                     android:textColor="#ff3cff80"

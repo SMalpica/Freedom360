@@ -1,13 +1,13 @@
 package abaco_digital.freedom360;
-//TODO: encontrar fuente con serif distinta de times new roman
-//TODO: intentar que el fondo del scroll escale a las proporciones de la imagen
-//TODO: anyadir sombras al horizontalScroll o a las descripciones
+//TODO: tamanyo de la letra dependiente del de la pantalla
+//TODO: probar con distintas resoluciones para tablet y movil
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,6 +51,7 @@ public class GaleriaPrincipal extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         final View contentView = findViewById(android.R.id.content);
         contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE);
+        Typeface face= Typeface.createFromAsset(getAssets(), "fonts/DroidSerif-Regular.ttf");
         //use different layouts depending on the screen size
         if(auxiliar.isTablet(getApplicationContext())){
             setContentView(R.layout.activity_galeria_principal);
@@ -72,11 +73,18 @@ public class GaleriaPrincipal extends Activity {
             inferior.getLayoutParams().height=outMetrics.heightPixels*3/6-10;
             //forzar que la imagen y el texto del layout central sean igual de altos
             //en xml
+            //tipografia tipo serif
             TextView texto = (TextView)findViewById(R.id.editText);
             texto.setMaxHeight(outMetrics.heightPixels * 2 / 6);
+            texto.setTypeface(face);
+            texto=(TextView)findViewById(R.id.textView);
+            texto.setTypeface(face);
         }else{
             setContentView(R.layout.movil_galeria_principal);
+            TextView texto = (TextView)findViewById(R.id.textView);
+            texto.setTypeface(face);
             //hacer que el scroll sea del tamaño del fondo para que no se deforme
+            //hecho en xml con frameLayout
             //usar distintos metodos dependiendo de la api
 //            HorizontalScrollView horizontal = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
 //            int sdk = android.os.Build.VERSION.SDK_INT;
