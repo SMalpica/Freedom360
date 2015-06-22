@@ -1,5 +1,13 @@
 package abaco_digital.freedom360;
-
+/**
+ * Autor: Sandra Malpica Mallo
+ *
+ * Fecha: 22/06/2015
+ *
+ * Clase: GaleriaPrincipal.java
+ *
+ * Comments: aux. class, used to contain useful or test methods.
+ */
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
@@ -7,9 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-/**
- * Created by android on 16/06/2015.
- */
 public class auxiliar {
 
     /*it sets whether the device is a tablet or a phone depending on the screen size
