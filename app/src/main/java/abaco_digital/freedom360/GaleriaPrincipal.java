@@ -96,12 +96,13 @@ public class GaleriaPrincipal extends Activity {
         String path = "abaco_digital.freedom360:assets/videos/";
 //        File f = new File(path);/**/
         try {
-            String[] nombres= context.getAssets().list("videos/");
+            AssetManager manager = getAssets(); //get AssetManager
+            String[] nombres = manager.list("videos"); //get list of videos in the gallery
             File[] files=new File[nombres.length];
             for(int i=0; i<nombres.length; i++){
                 files[i] = new File(path+nombres[i]);
+                Log.d("FILL_DATA_FILES", files[i].getName());
             }
-            Log.d("FILL_DATA",path);
             if(files!=null){
                 for(int i=0; i<files.length; i++){
                     if(files[i].getName().contains(".mp4")){

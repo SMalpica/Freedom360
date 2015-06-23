@@ -101,10 +101,11 @@ public class auxiliar {
      */
     public static void crearImagen(String img, Context context){
         //obtain the path
-        String path = (context.getPackageResourcePath()+"/raw/"+img);
+        String path = "videos/"+img;
         FileDescriptor fd = null;
+
         try{//take the file descriptor of the video
-            fd = new FileInputStream(new File(path)).getFD();
+            fd = context.getAssets().openFd(path).getFileDescriptor();
         }
         catch(Exception e){
             e.printStackTrace();
