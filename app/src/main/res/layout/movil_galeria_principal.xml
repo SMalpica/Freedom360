@@ -60,7 +60,7 @@
         <HorizontalScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/horizontalScrollView"
+            android:id="@+id/layoutInferior"
             android:visibility="visible"
             ><!--android:background="@drawable/espacio"-->
             <TextView

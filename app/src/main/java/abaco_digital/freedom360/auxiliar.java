@@ -9,11 +9,19 @@ package abaco_digital.freedom360;
  * Comments: aux. class, used to contain useful or test methods.
  */
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.media.MediaMetadataRetriever;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 public class auxiliar {
 
@@ -82,6 +90,48 @@ public class auxiliar {
         int height = textView.getMeasuredHeight();
         Rect out = new Rect();
         textView.getDrawingRect(out);
+
+    }
+
+    /**
+     * This method creates a frame sample from the video named <img> and then stores
+     * that frame in the drawable folder as a jpeg.
+     * @param img
+     * @param context
+     */
+    public static void crearImagen(String img, Context context){
+        //obtain the path
+        String path = (context.getPackageResourcePath()+"/raw/"+img);
+        FileDescriptor fd = null;
+        try{//take the file descriptor of the video
+            fd = new FileInputStream(new File(path)).getFD();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        MediaMetadataRetriever md = new MediaMetadataRetriever();
+        try {//take a frame sample for the video
+            md.setDataSource(fd);
+            Bitmap bmp = md.getFrameAtTime();
+            try{//store the bitmap in the drawable folder
+                File file = new File (context.getPackageResourcePath()+"/drawable/"+img);
+                FileOutputStream out = new FileOutputStream(file);
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
+                out.flush();
+                out.close(); //close the stream
+                MediaStore.Images.Media.insertImage(context.getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+            }catch(Exception ex){ex.printStackTrace();}
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                md.release();
+            } catch (RuntimeException ex) {
+            }
+        }
+
 
     }
 }

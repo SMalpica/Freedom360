@@ -3,4 +3,5 @@
     <string name="titulo_principal">Spherical Video Player</string>
     <string name="descripcion">Panoramic video (surround video, spherical video, 360 video) is the new dimension to viewing and experiencing video! With interactivity at its core, 360 video provides plenty opportunity for exploration, simulation, training and total immersion.</string>
     <string name="legend_icono">Logo de freedom 360</string>
+    <string name="defecto">mas</string>
 </resources>
