@@ -2,14 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff000000">
+    android:padding="3dp">
 
     <ImageView
-        android:layout_weight="1"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/miniatura"
-        android:src="@drawable/mas"
-        android:background="#FF000000"
-        android:padding="2dp"/>
+        android:padding="3dp"
+        android:src="@drawable/sinimagen"
+        android:contentDescription="@string/legend_miniatura"
+        android:background="#ff6a6a6a"
+        />
+
 </LinearLayout>

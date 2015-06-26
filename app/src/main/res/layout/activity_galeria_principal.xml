@@ -90,9 +90,9 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:id="@+id/layoutInferior"
-            android:background="@drawable/espacio" >
+            android:background="@drawable/espacio">
             <abaco_digital.freedom360.HorizontalListView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/galeria"
             />

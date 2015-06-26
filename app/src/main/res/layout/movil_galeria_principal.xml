@@ -57,18 +57,22 @@
             android:layout_height="match_parent"
             android:src="@drawable/espacio"
             android:scaleType="centerCrop"/>
-        <HorizontalScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/layoutInferior"
-            android:visibility="visible"
-            ><!--android:background="@drawable/espacio"-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Video aqui"
-                android:textColor="#ff000000" />
-            </HorizontalScrollView>
+        <abaco_digital.freedom360.HorizontalListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/galeria"></abaco_digital.freedom360.HorizontalListView>
+        <!--<HorizontalScrollView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/layoutInferior"-->
+            <!--android:visibility="visible"-->
+            <!-->&lt;!&ndash;android:background="@drawable/espacio"&ndash;&gt;-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Video aqui"-->
+                <!--android:textColor="#ff000000" />-->
+            <!--</HorizontalScrollView>-->
     </FrameLayout>
 
 </LinearLayout>

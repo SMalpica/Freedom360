@@ -10,11 +10,17 @@ package abaco_digital.freedom360;
  * screen. Inflates the rowView and fills each element with data.
  */
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+
 import java.util.List;
 
 
@@ -51,8 +57,25 @@ public class VideoAdapter extends BaseAdapter {
         // Lookup view for data population
         ImageView item = (ImageView) convertView.findViewById(R.id.miniatura);
         // Populate the data into the template view using the data object
+        Log.e("VIDEO_ADAPTER_GETVIEW", video.getImagen());
+        int punto = video.getImagen().indexOf(".");
+        if(punto != -1){
+            video.setImagen(video.getImagen().substring(0, punto));
+        }
         int id = contexto.getResources().getIdentifier(video.getImagen(), "drawable", contexto.getPackageName());
-        item.setImageResource(id);
+        if(id!=0){
+            item.setImageResource(id);
+        }
+        item.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        /*WindowManager wm = (WindowManager)contexto.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(outMetrics);
+        int altura = (outMetrics.heightPixels/2)-30;
+        convertView.setMinimumHeight(altura);
+        item.setMaxHeight(altura);
+        item.setMinimumHeight(altura);*/
+        //item.setScaleType(ImageView.ScaleType.FIT_CENTER);
         // Return the completed view to render on screen
         return convertView;
     }

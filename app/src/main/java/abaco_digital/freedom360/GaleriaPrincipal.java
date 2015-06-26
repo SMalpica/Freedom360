@@ -10,11 +10,14 @@ package abaco_digital.freedom360;
  * of the launch screen and sets different layouts depending on the device
  * used.
  */
+//TODO: imagenes galeria se recortan en tablet. arreglarlo
+//TODO: las imagenes not available no se ven en todos los moviles. Arreglarlo.
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -27,7 +30,9 @@ import android.view.Display;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 
@@ -67,6 +72,8 @@ public class GaleriaPrincipal extends Activity {
             //half the space for the gallery
             superior.getLayoutParams().height=outMetrics.heightPixels/6;
             inferior.getLayoutParams().height=outMetrics.heightPixels*3/6;
+            HorizontalListView galeria = (HorizontalListView)findViewById(R.id.galeria);
+            galeria.setMinimumHeight(inferior.getHeight());
             //force text and image have the same height in xml
             TextView texto = (TextView)findViewById(R.id.editText);
             texto.setMaxHeight(outMetrics.heightPixels * 2 / 6); //textview max height
@@ -87,34 +94,26 @@ public class GaleriaPrincipal extends Activity {
         //fill the gallery with the available videos
         ArrayList<Video> lista = fillData(getApplicationContext());
         HorizontalListView lv = (HorizontalListView)findViewById(R.id.galeria);
+        Log.e("LISTA_LENGTH",String.valueOf(lista.size()));
         lv.setAdapter(new VideoAdapter(getApplicationContext(),lista));
     }
 
     /**/
     private ArrayList<Video> fillData(Context context){
         ArrayList<Video> salida = new ArrayList<Video>();
-        String path = "abaco_digital.freedom360:assets/videos/";
-//        File f = new File(path);/**/
-        try {
-            AssetManager manager = getAssets(); //get AssetManager
-            String[] nombres = manager.list("videos"); //get list of videos in the gallery
-            File[] files=new File[nombres.length];
-            for(int i=0; i<nombres.length; i++){
-                files[i] = new File(path+nombres[i]);
-                Log.d("FILL_DATA_FILES", files[i].getName());
-            }
-            if(files!=null){
-                for(int i=0; i<files.length; i++){
-                    if(files[i].getName().contains(".mp4")){
-                        Video aux = new Video(files[i].getName(),context);
-                        salida.add(aux);
+            Field[] fields = R.raw.class.getFields();
+            for(Field f:fields){
+                Log.d("FILL_DATA_FILES", f.getName());
+                    Video aux = new Video(f.getName(),context);
+                    int id = getApplicationContext().getResources().getIdentifier(f.getName(), "raw", getApplicationContext().getPackageName());
+                    if(id!=0){
+                        aux.setID(id);
+                        aux.crearFrameSample();
                     }
-                }
+                    salida.add(aux);
             }
             Video aux = new Video("mas",context);
             salida.add(aux);
             return salida;
-        }catch(IOException ex){ex.printStackTrace(); return null;}
-
     }
 }

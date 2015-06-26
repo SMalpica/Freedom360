@@ -12,6 +12,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -22,6 +23,8 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class auxiliar {
 
@@ -96,37 +99,38 @@ public class auxiliar {
     /**
      * This method creates a frame sample from the video named <img> and then stores
      * that frame in the drawable folder as a jpeg.
-     * @param img
+     * @param video
      * @param context
      */
-    public static void crearImagen(String img, Context context){
-        //obtain the path
-        String path = "videos/"+img;
-        FileDescriptor fd = null;
-
-        try{//take the file descriptor of the video
-            fd = context.getAssets().openFd(path).getFileDescriptor();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+    public static void crearImagen(Video video, Context context){
+        String path = "android.resource://"+context.getPackageName()+"/raw/"+video.getID();
         MediaMetadataRetriever md = new MediaMetadataRetriever();
-        try {//take a frame sample for the video
-            md.setDataSource(fd);
-            Bitmap bmp = md.getFrameAtTime();
+        Log.d("CREAR_IMAGEN",path);
+        try {
+            Uri uri = Uri.parse(path);
+            md.setDataSource(context,uri);
+            Log.d("CREAR_IMAGEN2",uri.getPath());
+            Bitmap bmp = md.getFrameAtTime(2000);
+            Log.d("CREAR_IMAGEN3","frame obtenido");
             try{//store the bitmap in the drawable folder
-                File file = new File (context.getPackageResourcePath()+"/drawable/"+img);
+                File file = new File (context.getPackageResourcePath()+"/drawable/"+video.getImagen());
+                Log.d("CREAR_IMAGEN3","file creado");
                 FileOutputStream out = new FileOutputStream(file);
+                Log.d("CREAR_IMAGEN3","outputStream creado");
                 bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
+                Log.d("CREAR_IMAGEN3", "bmp compressed");
                 out.flush();
                 out.close(); //close the stream
-                MediaStore.Images.Media.insertImage(context.getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
-            }catch(Exception ex){ex.printStackTrace();}
+                Log.d("CREAR_IMAGEN3", "outputStream closed");
+                MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
+                Log.d("CREAR_IMAGEN3", "imagen guardada");
+            }catch(Exception ex){
+                Log.e("CAUSA_FILE",ex.getMessage());ex.printStackTrace();}
         } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
+            System.out.println("causa fd ilegal");ex.printStackTrace();
         } catch (RuntimeException ex) {
-            ex.printStackTrace();
-        } finally {
+            System.out.println("causa fd runtime");ex.printStackTrace();
+        }finally {
             try {
                 md.release();
             } catch (RuntimeException ex) {

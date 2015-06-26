@@ -20,13 +20,20 @@ import java.io.FileNotFoundException;
  */
 public class Video {
     private String imagen;
+    private FileDescriptor fileDescriptor;
+    private Context context;
+    private int id;
 
     public Video(String img, Context context){
         this.imagen = img;
+        this.context=context;
+    }
+
+    public void crearFrameSample(){
         //make sure that the image exists. If not, create one with the first video image
-        int imgId = context.getResources().getIdentifier(img, "drawable", context.getPackageName());
+        int imgId = context.getResources().getIdentifier(this.imagen, "drawable", context.getPackageName());
         if(imgId == 0){ //img was not found
-            auxiliar.crearImagen(img,context);//create image sample
+          auxiliar.crearImagen(this,context);//create image sample
         }
     }
 
@@ -37,4 +44,12 @@ public class Video {
     public void setImagen(String nuevaImg){
         this.imagen= nuevaImg;
     }
+
+    public void setFD(FileDescriptor fd){ this.fileDescriptor = fd; }
+
+    public FileDescriptor getFD(){ return this.fileDescriptor;}
+
+    public void setID(int id){this.id = id;}
+
+    public int getID(){return this.id;}
 }
