@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -73,7 +72,7 @@ public class ResourceDownloadDialog extends DialogFragment{
                             int downloadedSize = 0;
                             //make buffer to store data
                             byte[] buffer = new byte[1024];
-                            int bufferLength = 0;
+                            int bufferLength;
                             //write to file
                             while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
                                 fileOutput.write(buffer, 0, bufferLength);

@@ -22,15 +22,10 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class auxiliar {
 
@@ -62,8 +57,8 @@ public class auxiliar {
 
     /**
      * returns the device screen's inches
-     * @param context
-     * @return
+     * @param context context
+     * @return inches
      */
     public static double getPulgadas (Context context){
         try{
@@ -79,10 +74,10 @@ public class auxiliar {
         }
     }
 
-    public static double getCentimetros (Context context){
+/*    public static double getCentimetros (Context context){
         double pulg = getPulgadas(context);
         return pulg*2.54;
-    }
+    }*/
 
 /*  No funciona!!
     public static double getFuente (Context context){
@@ -101,8 +96,8 @@ public class auxiliar {
     public static void setFuente (TextView textView){
         //obtain the views size
         textView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int widht = textView.getMeasuredWidth();
-        int height = textView.getMeasuredHeight();
+//        int widht = textView.getMeasuredWidth();
+//        int height = textView.getMeasuredHeight();
         Rect out = new Rect();
         textView.getDrawingRect(out);
 
@@ -111,8 +106,8 @@ public class auxiliar {
     /**
      * This method creates a frame sample from the video named <img> and then stores
      * that frame in the drawable folder as a jpeg.
-     * @param video
-     * @param context
+     * @param video video
+     * @param context context
      */
     public static void crearImagen(Video video, Context context){
         MediaMetadataRetriever md = new MediaMetadataRetriever();
@@ -125,7 +120,7 @@ public class auxiliar {
             Bitmap bmp = md.getFrameAtTime(2000);   //get the image
 
             //rescale the frame sample
-            Bitmap background = Bitmap.createBitmap((int)width, (int)height, Bitmap.Config.ARGB_8888);
+            Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             float originalWidth = bmp.getWidth(), originalHeight = bmp.getHeight();
             Canvas canvas = new Canvas(background);
             float scale = width/originalWidth;
@@ -158,7 +153,7 @@ public class auxiliar {
         }finally {
             try {
                 md.release();
-            } catch (RuntimeException ex) {}
+            } catch (RuntimeException ignored) {}
         }
         /*String path = "android.resource://"+context.getPackageName()+"/raw/"+video.getID();
         MediaMetadataRetriever md = new MediaMetadataRetriever();
@@ -200,12 +195,13 @@ public class auxiliar {
     /* Checks if external storage is available for read and write */
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
+    /**
+     * returns the directory where the app is going to store videos
+     * @return
+     */
     public static File encontrarDirectorio(){
         File directorio;
         //obtain the external or internal available directory
