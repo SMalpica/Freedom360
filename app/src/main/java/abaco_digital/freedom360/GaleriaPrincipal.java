@@ -16,6 +16,8 @@ package abaco_digital.freedom360;
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
 //TODO: descarga de videos con clic en /drawable/mas
+//TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
+//TODO: doble tapback para salir de la aplicacion?
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -54,6 +56,7 @@ public class GaleriaPrincipal extends Activity {
     @TargetApi(21)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        auxiliar.principal = this;
         //full-screen
         getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //horizontal orientation
@@ -61,7 +64,7 @@ public class GaleriaPrincipal extends Activity {
         final View contentView = findViewById(android.R.id.content);
         contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE);
         //change default typeface
-        Typeface face= Typeface.createFromAsset(getAssets(), "fonts/DroidSerif-Regular.ttf");
+        Typeface face= Typeface.createFromAsset(getAssets(), auxiliar.fuente);
 
 
         //use different layouts depending on the screen size
@@ -106,39 +109,30 @@ public class GaleriaPrincipal extends Activity {
 
     /**/
     private ArrayList<Video> fillData(Context context){
-        File directorio;
-        //obtain the external or internal available directory
-        if(auxiliar.isExternalStorageWritable()){
-            directorio = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-        }else{
-            directorio = Environment.getDataDirectory();
-        }
-        //obtain or create the app directory
-        String carpeta = "videos360";
-        File f = new File(directorio.getPath()+"/"+carpeta);
+        File f = auxiliar.directorio;
         String[] nombres = f.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
-                return filename.contains(".mp4");
+                return filename.contains(auxiliar.extension);
             }
         });
         //obtain the videos
         ArrayList<Video> salida = new ArrayList<Video>();
-//        Field[] fields = R.raw.class.getFields();
-        for(String s:nombres){
-            Log.d("FILL_DATA_FILES", s);
-            Video aux = new Video(s,context);
-            aux.setPath(f.getPath()+"/"+s);
-            aux.crearFrameSample();
-//                int id = getApplicationContext().getResources().getIdentifier(f.getName(), "raw", getApplicationContext().getPackageName());
-/*                if(id!=0){
-                    aux.setID(id);
-                    aux.crearFrameSample();
-                }*/
-            salida.add(aux);
+        if(nombres!=null){
+            for(String s:nombres){
+                Log.d("FILL_DATA_FILES", s);
+                Video aux = new Video(s,context);
+                aux.setPath(f.getPath()+"/"+s);
+                aux.crearFrameSample();
+                salida.add(aux);
+            }
         }
         //TODO: add the two sample videos
-        Video aux = new Video("mas",context);
+        Video aux = new Video("predef1",context);
+        salida.add(aux);
+        aux = new Video("predef2",context);
+        salida.add(aux);
+        aux = new Video("mas",context);
         salida.add(aux);
         return salida;
     }

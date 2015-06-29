@@ -4,12 +4,20 @@ package abaco_digital.freedom360;
  *
  * Fecha: 23/06/2015
  *
- * Clase: MyAdapter.java
+ * Clase: VideoAdapter.java
  *
  * Comments: manages the elements within the listview of the app's main
  * screen. Inflates the rowView and fills each element with data.
  */
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -20,7 +28,15 @@ import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 
@@ -47,7 +63,7 @@ public class VideoAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int posicion, View convertView, ViewGroup parent){
+    public View getView(int posicion, View convertView, final ViewGroup parent){
         //get the data item for this position
         Video video = (Video)getItem(posicion);
         // Check if an existing view is being reused, otherwise inflate the view
@@ -58,13 +74,33 @@ public class VideoAdapter extends BaseAdapter {
         ImageView item = (ImageView) convertView.findViewById(R.id.miniatura);
         // Populate the data into the template view using the data object
         Log.e("VIDEO_ADAPTER_GETVIEW", video.getImagen());
+        //parse the video name to get the image name
         int punto = video.getImagen().indexOf(".");
         if(punto != -1){
             video.setImagen(video.getImagen().substring(0, punto));
         }
+        //get the image id
         int id = contexto.getResources().getIdentifier(video.getImagen(), "drawable", contexto.getPackageName());
         if(id!=0){
             item.setImageResource(id);
+            //TODO: setonclicklistener de los videos
+            if(!video.getImagen().equalsIgnoreCase("mas")){
+                //take out background color
+                item.setBackgroundColor(Color.TRANSPARENT);
+                item.setPadding(0,0,0,0);
+            }else{
+                Log.e("SETEANDO_MAS","entrando");
+                item.setClickable(true);
+                //set the actions to be done when the image is pressed
+                item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.e("MAS_ONCLICK", "principio");
+                        ResourceDownloadDialog dialog = new ResourceDownloadDialog();
+                        dialog.show(auxiliar.principal.getFragmentManager(),"ResourceDownloadDialog");
+                    }
+                });
+            }
         }
         item.setScaleType(ImageView.ScaleType.FIT_CENTER);
 

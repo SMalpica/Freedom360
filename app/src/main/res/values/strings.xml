@@ -5,4 +5,8 @@
     <string name="legend_icono">Logo de freedom 360</string>
     <string name="defecto">mas</string>
     <string name="legend_miniatura">Video frame sample (if available)</string>
+    <string name="titulo_popup">Video download</string>
+    <string name="url">insert video URL</string>
+    <string name="atras">Back</string>
+    <string name="confirmar">Download</string>
 </resources>

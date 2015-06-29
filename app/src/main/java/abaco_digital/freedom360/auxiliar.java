@@ -8,8 +8,12 @@ package abaco_digital.freedom360;
  *
  * Comments: aux. class, used to contain useful or test methods.
  */
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -18,6 +22,7 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -28,6 +33,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class auxiliar {
+
+    protected final static String fuente = "fonts/DroidSerif-Regular.ttf";
+    protected final static String carpeta = "videos360";
+    protected final static File directorio = encontrarDirectorio();
+    protected final static String extension = ".mp4";
+    protected static Activity principal=null;
 
     /*it sets whether the device is a tablet or a phone depending on the screen size
     * this method is intended to be used to switch between different layouts
@@ -105,11 +116,27 @@ public class auxiliar {
      */
     public static void crearImagen(Video video, Context context){
         MediaMetadataRetriever md = new MediaMetadataRetriever();
-        String path = video.getPath();
+        String path = video.getPath();  //get the video path
+        int width =204;
+        int height = 300;
         try {
             Uri uri = Uri.parse(path);
             md.setDataSource(context, uri);
-            Bitmap bmp = md.getFrameAtTime(2000);
+            Bitmap bmp = md.getFrameAtTime(2000);   //get the image
+
+            //rescale the frame sample
+            Bitmap background = Bitmap.createBitmap((int)width, (int)height, Bitmap.Config.ARGB_8888);
+            float originalWidth = bmp.getWidth(), originalHeight = bmp.getHeight();
+            Canvas canvas = new Canvas(background);
+            float scale = width/originalWidth;
+            float xTranslation = 0.0f, yTranslation = (height - originalHeight * scale)/2.0f;
+            Matrix transformation = new Matrix();
+            transformation.postTranslate(xTranslation, yTranslation);
+            transformation.preScale(scale, scale);
+            Paint paint = new Paint();
+            paint.setFilterBitmap(true);
+            canvas.drawBitmap(bmp, transformation, paint);
+
             try{//store the bitmap in the drawable folder
                 File file = new File (path);
                 Log.d("CREAR_IMAGEN3","file creado");
@@ -177,5 +204,17 @@ public class auxiliar {
             return true;
         }
         return false;
+    }
+
+    public static File encontrarDirectorio(){
+        File directorio;
+        //obtain the external or internal available directory
+        if(auxiliar.isExternalStorageWritable()){
+            directorio = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        }else{
+            directorio = Environment.getDataDirectory();
+        }
+        File f = new File(directorio.getPath()+"/"+auxiliar.carpeta);
+        return f;
     }
 }
