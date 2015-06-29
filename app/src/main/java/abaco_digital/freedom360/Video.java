@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
  */
 public class Video {
     private String imagen;
+    private String path;
     private FileDescriptor fileDescriptor;
     private Context context;
     private int id;
@@ -27,6 +28,14 @@ public class Video {
     public Video(String img, Context context){
         this.imagen = img;
         this.context=context;
+    }
+
+    public void setPath(String p){
+        this.path=p;
+    }
+
+    public String getPath(){
+        return this.path;
     }
 
     public void crearFrameSample(){

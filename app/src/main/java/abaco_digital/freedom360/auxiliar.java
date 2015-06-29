@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -103,9 +104,38 @@ public class auxiliar {
      * @param context
      */
     public static void crearImagen(Video video, Context context){
-        String path = "android.resource://"+context.getPackageName()+"/raw/"+video.getID();
         MediaMetadataRetriever md = new MediaMetadataRetriever();
-        Log.d("CREAR_IMAGEN",path);
+        String path = video.getPath();
+        try {
+            Uri uri = Uri.parse(path);
+            md.setDataSource(context, uri);
+            Bitmap bmp = md.getFrameAtTime(2000);
+            try{//store the bitmap in the drawable folder
+                File file = new File (path);
+                Log.d("CREAR_IMAGEN3","file creado");
+                FileOutputStream out = new FileOutputStream(file);
+                Log.d("CREAR_IMAGEN3","outputStream creado");
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
+                Log.d("CREAR_IMAGEN3", "bmp compressed");
+                out.flush();
+                out.close(); //close the stream
+                Log.d("CREAR_IMAGEN3", "outputStream closed");
+                MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
+                Log.d("CREAR_IMAGEN3", "imagen guardada");
+            }catch(Exception ex){
+                Log.e("CAUSA_FILE",ex.getMessage());ex.printStackTrace();}
+        } catch (IllegalArgumentException ex) {
+            System.out.println("causa fd ilegal");ex.printStackTrace();
+        } catch (RuntimeException ex) {
+            System.out.println("causa fd runtime");ex.printStackTrace();
+        }finally {
+            try {
+                md.release();
+            } catch (RuntimeException ex) {}
+        }
+        /*String path = "android.resource://"+context.getPackageName()+"/raw/"+video.getID();
+        MediaMetadataRetriever md = new MediaMetadataRetriever();
+        Log.d("CREAR_IMAGEN", path);
         try {
             Uri uri = Uri.parse(path);
             md.setDataSource(context,uri);
@@ -135,8 +165,17 @@ public class auxiliar {
                 md.release();
             } catch (RuntimeException ex) {
             }
+        }*/
+
+
+    }
+
+    /* Checks if external storage is available for read and write */
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
         }
-
-
+        return false;
     }
 }

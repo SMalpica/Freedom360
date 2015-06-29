@@ -11,7 +11,11 @@ package abaco_digital.freedom360;
  * used.
  */
 //TODO: imagenes galeria se recortan en tablet. arreglarlo
-//TODO: las imagenes not available no se ven en todos los moviles. Arreglarlo.
+//TODO: las imagenes not available no se ven en todos los moviles. Revisar
+//TODO: guardar los dos primeros videos en res/raw y crear capturas en res/drawable
+//TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
+//TODO: borrar videos con longclic
+//TODO: descarga de videos con clic en /drawable/mas
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -21,6 +25,7 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +36,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -100,20 +106,40 @@ public class GaleriaPrincipal extends Activity {
 
     /**/
     private ArrayList<Video> fillData(Context context){
-        ArrayList<Video> salida = new ArrayList<Video>();
-            Field[] fields = R.raw.class.getFields();
-            for(Field f:fields){
-                Log.d("FILL_DATA_FILES", f.getName());
-                    Video aux = new Video(f.getName(),context);
-                    int id = getApplicationContext().getResources().getIdentifier(f.getName(), "raw", getApplicationContext().getPackageName());
-                    if(id!=0){
-                        aux.setID(id);
-                        aux.crearFrameSample();
-                    }
-                    salida.add(aux);
+        File directorio;
+        //obtain the external or internal available directory
+        if(auxiliar.isExternalStorageWritable()){
+            directorio = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        }else{
+            directorio = Environment.getDataDirectory();
+        }
+        //obtain or create the app directory
+        String carpeta = "videos360";
+        File f = new File(directorio.getPath()+"/"+carpeta);
+        String[] nombres = f.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.contains(".mp4");
             }
-            Video aux = new Video("mas",context);
+        });
+        //obtain the videos
+        ArrayList<Video> salida = new ArrayList<Video>();
+//        Field[] fields = R.raw.class.getFields();
+        for(String s:nombres){
+            Log.d("FILL_DATA_FILES", s);
+            Video aux = new Video(s,context);
+            aux.setPath(f.getPath()+"/"+s);
+            aux.crearFrameSample();
+//                int id = getApplicationContext().getResources().getIdentifier(f.getName(), "raw", getApplicationContext().getPackageName());
+/*                if(id!=0){
+                    aux.setID(id);
+                    aux.crearFrameSample();
+                }*/
             salida.add(aux);
-            return salida;
+        }
+        //TODO: add the two sample videos
+        Video aux = new Video("mas",context);
+        salida.add(aux);
+        return salida;
     }
 }
