@@ -11,7 +11,6 @@
         android:id="@+id/enlaceDescarga"
         android:layout_gravity="center_horizontal"
         android:layout_margin="3dp"
-        android:autoLink="web"
         android:clickable="true"
         android:editable="true"
         android:enabled="true"
@@ -23,4 +22,5 @@
         android:gravity="center"
         android:textColor="#ff6d6d6d"
         android:background="#ffffffff" />
+    <requestFocus />
 </LinearLayout>

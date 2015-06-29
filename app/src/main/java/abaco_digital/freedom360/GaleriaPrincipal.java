@@ -12,12 +12,13 @@ package abaco_digital.freedom360;
  */
 //TODO: imagenes galeria se recortan en tablet. arreglarlo
 //TODO: las imagenes not available no se ven en todos los moviles. Revisar
-//TODO: guardar los dos primeros videos en res/raw y crear capturas en res/drawable
+//TODO: guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
 //TODO: descarga de videos con clic en /drawable/mas
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
 //TODO: doble tapback para salir de la aplicacion?
+//TODO: keyboard shows in tablet but not in smartphone (dialog editText)
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
