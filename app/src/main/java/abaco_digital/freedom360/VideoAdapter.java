@@ -63,7 +63,6 @@ public class VideoAdapter extends BaseAdapter {
         int id = contexto.getResources().getIdentifier(video.getImagen(), "drawable", contexto.getPackageName());
         if(id!=0){
             item.setImageResource(id);
-            //TODO: setonclicklistener de los videos
             if(!video.getImagen().equalsIgnoreCase("mas")){
                 //take out background color
                 item.setBackgroundColor(Color.TRANSPARENT);

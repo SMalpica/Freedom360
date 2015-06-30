@@ -15,7 +15,7 @@ package abaco_digital.freedom360;
 //TODO: guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
-//TODO: descarga de videos con longclic en /drawable/mas
+//TODO: descarga de videos con longclic en /drawable/mas.Hecho pero da error malformedURL
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
 //TODO: doble tapback para salir de la aplicacion?
 //TODO: keyboard shows in tablet but not in smartphone (dialog editText)
@@ -33,6 +33,7 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -41,6 +42,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -50,9 +52,14 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -229,12 +236,12 @@ public class GaleriaPrincipal extends Activity {
 
                             View promptView = layoutInflater.inflate(R.layout.popup, null);
 
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GaleriaPrincipal.this);
+                            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GaleriaPrincipal.this);
 
                             // set prompts.xml to be the layout file of the alertdialog builder
                             alertDialogBuilder.setView(promptView);
 
-                            final EditText input = (EditText) promptView.findViewById(R.id.enlaceDescarga);
+                            final EditText enlace = (EditText) promptView.findViewById(R.id.enlaceDescarga);
 
                             // setup a dialog window
                             alertDialogBuilder
@@ -242,7 +249,53 @@ public class GaleriaPrincipal extends Activity {
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             // get user input and set it to result
-                                            System.out.println(input.getText());
+//                                            System.out.println(input.getText());
+                                            Log.e("ON_CLICK","principio");
+                                            InputMethodManager imm = (InputMethodManager) GaleriaPrincipal.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                            imm.showSoftInput(enlace, InputMethodManager.SHOW_IMPLICIT);
+                                            String path = enlace.getText().toString();
+                                            Log.e("ON_CLICK",path);
+                                            try{
+                                                //method for download found in http://www.insdout.com/snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
+                                                URL url = new URL(path);
+                                                //establish connection
+                                                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                                                Log.e("ON_CLICK","conexion abierta");
+                                                //configuration
+                                                urlConnection.setRequestMethod("GET");
+                                                urlConnection.setDoOutput(true);
+                                                urlConnection.connect();
+                                                Log.e("ON_CLICK", "conexion establecida");
+                                                //download and get the video
+                                                File f = auxiliar.directorio;
+                                                File file = new File(f,path);
+                                                //stream to place the downloaded file
+                                                FileOutputStream fileOutput = new FileOutputStream(file);
+                                                //read data
+                                                InputStream inputStream = urlConnection.getInputStream();
+                                                //get file size
+                                                int totalSize = urlConnection.getContentLength();
+                                                Log.e("ON_CLICK","longitud obtenida");
+                                                int downloadedSize = 0;
+                                                //make buffer to store data
+                                                byte[] buffer = new byte[1024];
+                                                int bufferLength;
+                                                //write to file
+                                                while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
+                                                    fileOutput.write(buffer, 0, bufferLength);
+                                                    downloadedSize += bufferLength;
+                                                    int porcentaje = 100*downloadedSize/totalSize;
+                                                    alertDialogBuilder.setMessage("descargando... "+porcentaje+"%");
+                                                }
+                                                //close
+                                                fileOutput.close();
+                                            }catch(MalformedURLException ex){
+                                                alertDialogBuilder.setMessage("Video not found. Bad URL");
+                                                Log.e("ON_CLICK","malformedURL");
+                                            }catch(IOException ex){
+                                                alertDialogBuilder.setMessage("Bad connection");
+                                                Log.e("ON_CLICK", "badConnection");
+                                            }
                                         }
                                     })
                                     .setNegativeButton("Cancel",
@@ -254,7 +307,7 @@ public class GaleriaPrincipal extends Activity {
 
                             // create an alert dialog
                             AlertDialog alertD = alertDialogBuilder.create();
-
+                            alertD.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                             alertD.show();
                             return true;
                         }
@@ -274,5 +327,13 @@ public class GaleriaPrincipal extends Activity {
             // Return the completed view to render on screen
             return convertView;
         }
+
+        /*private class VideoDownloader extends AsyncTask{
+            @Override
+            protected Video doInBackground(String... param) {
+                // TODO Auto-generated method stub
+                return downloadVideo(param[0]);
+            }
+        }*/
     }
 }
