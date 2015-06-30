@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -27,16 +29,41 @@ import java.net.URL;
  *
  * Comments: creates a fragment dialog that manages the video downloads of the user
  */
-public class ResourceDownloadDialog extends DialogFragment{
+public class ResourceDownloadDialog extends DialogFragment {
+
+    private EditText enlace;
+
+    //constructor
+    public ResourceDownloadDialog(){}
+
+    public static ResourceDownloadDialog newInstance() {
+        ResourceDownloadDialog frag = new ResourceDownloadDialog();
+        Bundle args = new Bundle();
+//        args.putString("title");
+        frag.setArguments(args);
+        return frag;
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState){
+        View view =inflater.inflate(R.layout.popup,container);
+        EditText descarga = (EditText) view.findViewById(R.id.enlaceDescarga);
+//        String title = getArguments().getString("title", "Enter Name");
+//        getDialog().setTitle(title);
+         //Show soft keyboard automatically
+//        descarga.requestFocus();
+        return view;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstance){
         super.onCreateDialog(savedInstance);
+//        getDialog().getWindow().setSoftInputMode(
+//                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        //inflate builder with custom view
-        builder.setView(inflater.inflate(R.layout.popup,null))
-                .setTitle(R.string.titulo_popup)    //set dialog title
+        builder.setTitle(R.string.titulo_popup)    //set dialog title
                 //set cancel button
                 .setNegativeButton(R.string.atras, new DialogInterface.OnClickListener() {
                     @Override

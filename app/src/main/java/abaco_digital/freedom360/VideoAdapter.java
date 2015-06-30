@@ -69,17 +69,9 @@ public class VideoAdapter extends BaseAdapter {
                 item.setBackgroundColor(Color.TRANSPARENT);
                 item.setPadding(0,0,0,0);
             }else{
-                Log.e("SETEANDO_MAS","entrando");
+                Log.e("SETEANDO_MAS", "entrando");
+
                 item.setClickable(true);
-                //set the actions to be done when the image is pressed
-                item.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.e("MAS_ONCLICK", "principio");
-                        ResourceDownloadDialog dialog = new ResourceDownloadDialog();
-                        dialog.show(auxiliar.principal.getFragmentManager(),"ResourceDownloadDialog");
-                    }
-                });
             }
         }
         item.setScaleType(ImageView.ScaleType.FIT_CENTER);
