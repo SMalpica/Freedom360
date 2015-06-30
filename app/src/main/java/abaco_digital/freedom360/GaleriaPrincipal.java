@@ -15,11 +15,12 @@ package abaco_digital.freedom360;
 //TODO: guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
-//TODO: descarga de videos con clic en /drawable/mas
+//TODO: descarga de videos con longclic en /drawable/mas
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
 //TODO: doble tapback para salir de la aplicacion?
 //TODO: keyboard shows in tablet but not in smartphone (dialog editText)
 //TODO: Downloads con asynctask
+//TODO: progressBar en dialog para la descarga?
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -116,7 +117,7 @@ public class GaleriaPrincipal extends Activity {
         ArrayList<Video> lista = fillData(getApplicationContext());
         HorizontalListView lv = (HorizontalListView)findViewById(R.id.galeria);
         Log.e("LISTA_LENGTH",String.valueOf(lista.size()));
-        lv.setAdapter(new VideoAdapter(getApplicationContext(),lista));
+        lv.setAdapter(new VideoAdapter(getApplicationContext(), lista));
     }
 
     /**/
@@ -215,9 +216,11 @@ public class GaleriaPrincipal extends Activity {
                     item.setClickable(true);
 
                     //set the actions to be done when the image is pressed
-                    item.setOnClickListener(new View.OnClickListener() {
+                    item.setOnLongClickListener(new View.OnLongClickListener() {
+                        /*based on http://examples.javacodegeeks.com/android/core/ui/
+                        alertdialog/android-prompt-user-input-dialog-example/ code*/
                         @Override
-                        public void onClick(View v) {
+                        public boolean onLongClick(View v) {
                             Log.e("MAS_ONCLICK", "principio");
 //                ResourceDownloadDialog dialog = ResourceDownloadDialog.newInstance();
 //                dialog.show(getFragmentManager(),"ResourceDownloadDialog");
@@ -253,6 +256,7 @@ public class GaleriaPrincipal extends Activity {
                             AlertDialog alertD = alertDialogBuilder.create();
 
                             alertD.show();
+                            return true;
                         }
                     });
                 }
