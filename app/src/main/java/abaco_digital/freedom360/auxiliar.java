@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 
 public class auxiliar {
 
@@ -192,6 +193,39 @@ public class auxiliar {
 
     }
 
+    /**
+     *
+     * @return name of a new video
+     */
+    public static String getNombreVideo(){
+        int ultimo = 1;
+        File directorio = encontrarDirectorio();
+        String[] nombres = directorio.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.contains(".mp4");
+            }
+        });
+        if(nombres!=null){
+            for(int i=0; i<nombres.length; i++){
+                int slash = nombres[i].lastIndexOf("_");
+                int dot = nombres[i].lastIndexOf(".");
+                int aux=0;
+                if(slash!=-1 && dot!=-1){
+                    try {
+                        aux = Integer.parseInt(nombres[i].substring(slash + 1, dot));
+                    }catch(NumberFormatException ex){
+                        Log.e("ON_CLICK","nombre de video no valido");
+                    }
+                }
+                if(aux > ultimo){
+                    ultimo = aux;
+                }
+            }
+        }
+        return "video_"+(ultimo+1)+".mp4";
+    }
+
     /* Checks if external storage is available for read and write */
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
@@ -211,6 +245,9 @@ public class auxiliar {
             directorio = Environment.getDataDirectory();
         }
         File f = new File(directorio.getPath()+"/"+auxiliar.carpeta);
+        if(!f.exists()){
+            f.mkdirs();
+        }
         return f;
     }
 }

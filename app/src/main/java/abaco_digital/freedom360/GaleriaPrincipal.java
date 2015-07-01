@@ -15,17 +15,17 @@ package abaco_digital.freedom360;
 //TODO: guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
-//TODO: descarga de videos con longclic en /drawable/mas.Hecho pero da error malformedURL
+//TODO: ojo con las url al descargar
+//TODO: gestionar errores con dialog y mensajes al usuario
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
 //TODO: doble tapback para salir de la aplicacion?
 //TODO: keyboard shows in tablet but not in smartphone (dialog editText)
-//TODO: Downloads con asynctask
-//TODO: progressBar en dialog para la descarga?
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
@@ -36,6 +36,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,6 +72,9 @@ import java.util.List;
  */
 public class GaleriaPrincipal extends Activity {
 
+    private VideoAdapter videoAdapter;
+    private AsyncVideoDownloader videoDownloader;
+    private ArrayList<Video> lista;
 
     @Override
     @TargetApi(21)
@@ -85,7 +89,7 @@ public class GaleriaPrincipal extends Activity {
         contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE);
         //change default typeface
         Typeface face= Typeface.createFromAsset(getAssets(), auxiliar.fuente);
-
+        videoDownloader = new AsyncVideoDownloader();
 
         //use different layouts depending on the screen size
         LinearLayout inferior;
@@ -121,10 +125,11 @@ public class GaleriaPrincipal extends Activity {
         }
 
         //fill the gallery with the available videos
-        ArrayList<Video> lista = fillData(getApplicationContext());
+        lista = fillData(getApplicationContext());
         HorizontalListView lv = (HorizontalListView)findViewById(R.id.galeria);
         Log.e("LISTA_LENGTH",String.valueOf(lista.size()));
-        lv.setAdapter(new VideoAdapter(getApplicationContext(), lista));
+        videoAdapter = new VideoAdapter(getApplicationContext(), lista);
+        lv.setAdapter(videoAdapter);
     }
 
     /**/
@@ -147,7 +152,6 @@ public class GaleriaPrincipal extends Activity {
                 salida.add(aux);
             }
         }
-        //TODO: add the two sample videos
         Video aux = new Video("predef1",context);
         salida.add(aux);
         aux = new Video("predef2",context);
@@ -160,7 +164,7 @@ public class GaleriaPrincipal extends Activity {
 /**
  * Autor: Sandra Malpica Mallo
  *
- * Fecha: 23/06/2015
+ * Fecha: 30/06/2015
  *
  * Clase: VideoAdapter.java
  *
@@ -258,43 +262,11 @@ public class GaleriaPrincipal extends Activity {
                                             try{
                                                 //method for download found in http://www.insdout.com/snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
                                                 URL url = new URL(path);
-                                                //establish connection
-                                                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                                                Log.e("ON_CLICK","conexion abierta");
-                                                //configuration
-                                                urlConnection.setRequestMethod("GET");
-                                                urlConnection.setDoOutput(true);
-                                                urlConnection.connect();
-                                                Log.e("ON_CLICK", "conexion establecida");
-                                                //download and get the video
-                                                File f = auxiliar.directorio;
-                                                File file = new File(f,path);
-                                                //stream to place the downloaded file
-                                                FileOutputStream fileOutput = new FileOutputStream(file);
-                                                //read data
-                                                InputStream inputStream = urlConnection.getInputStream();
-                                                //get file size
-                                                int totalSize = urlConnection.getContentLength();
-                                                Log.e("ON_CLICK","longitud obtenida");
-                                                int downloadedSize = 0;
-                                                //make buffer to store data
-                                                byte[] buffer = new byte[1024];
-                                                int bufferLength;
-                                                //write to file
-                                                while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
-                                                    fileOutput.write(buffer, 0, bufferLength);
-                                                    downloadedSize += bufferLength;
-                                                    int porcentaje = 100*downloadedSize/totalSize;
-                                                    alertDialogBuilder.setMessage("descargando... "+porcentaje+"%");
-                                                }
-                                                //close
-                                                fileOutput.close();
+                                                videoDownloader.execute(url);
+
                                             }catch(MalformedURLException ex){
                                                 alertDialogBuilder.setMessage("Video not found. Bad URL");
                                                 Log.e("ON_CLICK","malformedURL");
-                                            }catch(IOException ex){
-                                                alertDialogBuilder.setMessage("Bad connection");
-                                                Log.e("ON_CLICK", "badConnection");
                                             }
                                         }
                                     })
@@ -308,6 +280,7 @@ public class GaleriaPrincipal extends Activity {
                             // create an alert dialog
                             AlertDialog alertD = alertDialogBuilder.create();
                             alertD.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//                            alertD.getWindow().setSoftInputMode(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
                             alertD.show();
                             return true;
                         }
@@ -327,13 +300,101 @@ public class GaleriaPrincipal extends Activity {
             // Return the completed view to render on screen
             return convertView;
         }
+    }
 
-        /*private class VideoDownloader extends AsyncTask{
-            @Override
-            protected Video doInBackground(String... param) {
-                // TODO Auto-generated method stub
-                return downloadVideo(param[0]);
+
+    /**
+     * Autor: Sandra Malpica Mallo
+     *
+     * Fecha: 1/07/2015
+     *
+     * Clase: AsyncVideoDownloader.java
+     *
+     * Comments: async task used to download the videos of the app.
+     */
+    public class AsyncVideoDownloader extends AsyncTask<URL,Integer,String>{
+        //TODO: dar opcion de cancelar en las descargas
+        private ProgressDialog progreso;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progreso = new ProgressDialog(GaleriaPrincipal.this);
+            progreso.setTitle("Downloading...");
+            progreso.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progreso.setIndeterminate(false);
+            progreso.show();
+        }
+
+        protected String doInBackground(URL... params){
+            URL url;
+            String nombreVideo="video1.mp4";
+            for(int i=0; i<params.length; i++){
+                try{
+                    url = params[i];
+                    //establish connection
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    Log.e("ON_CLICK","conexion abierta");
+                    //configuration
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.connect();
+                    Log.e("ON_CLICK", "conexion establecida");
+                    //download and get the video
+                    File f = auxiliar.directorio;
+                    Log.e("ON_CLICK", "file directorio creado");
+                    nombreVideo=auxiliar.getNombreVideo();
+
+                    File file = new File(f,nombreVideo);
+                    Log.e("ON_CLICK", "file creado");
+                    //stream to place the downloaded file
+                    FileOutputStream fileOutput = new FileOutputStream(file);
+                    //read data
+                    Log.e("ON_CLICK", "outputStream creado");
+                    InputStream inputStream = urlConnection.getInputStream();
+                    Log.e("ON_CLICK", "getInputStream");
+                    //get file size
+                    int totalSize = urlConnection.getContentLength();
+                    Log.e("ON_CLICK","longitud obtenida");
+                    int downloadedSize = 0;
+                    //make buffer to store data
+                    byte[] buffer = new byte[1024];
+                    int bufferLength;
+                    //write to file
+                    while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
+                        fileOutput.write(buffer, 0, bufferLength);
+                        downloadedSize += bufferLength;
+                        int porcentaje = 100*downloadedSize/totalSize;
+//                        Log.e("ON_CLICK","completado "+porcentaje);
+                        publishProgress(porcentaje);
+                    }
+                    Log.e("ON_CLICK","archivo volcado");
+                    //close
+                    fileOutput.close();
+                    return "";
+                }catch(IOException ex){
+                    Log.e("ON_CLICK",ex.getMessage());
+                }
+
             }
-        }*/
+            return nombreVideo;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            progreso.setProgress(values[0]);
+
+        }
+
+        @Override
+        protected void onPostExecute(String result){
+            Video video = new Video(result,GaleriaPrincipal.this);
+            lista.add(0,video);
+            /*ArrayList<Video> aux = lista;
+            lista = new ArrayList<Video>();
+            lista.add(video);
+            lista.addAll(aux);*/
+            videoAdapter.notifyDataSetChanged();
+            progreso.cancel();
+        }
     }
 }
