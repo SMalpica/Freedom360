@@ -372,10 +372,6 @@ public class GaleriaPrincipal extends Activity {
         protected void onPostExecute(String result){
             Video video = new Video(result,GaleriaPrincipal.this);
             lista.add(0,video);
-            /*ArrayList<Video> aux = lista;
-            lista = new ArrayList<Video>();
-            lista.add(video);
-            lista.addAll(aux);*/
             videoAdapter.notifyDataSetChanged();
             progreso.cancel();
         }
