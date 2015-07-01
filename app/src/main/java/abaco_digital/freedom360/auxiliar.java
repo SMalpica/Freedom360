@@ -89,15 +89,17 @@ public class auxiliar {
      * @param context context
      */
     public static void crearImagen(Video video, Context context){
+        Log.e("FRAME_SAMPLE","en crear imagen");
         MediaMetadataRetriever md = new MediaMetadataRetriever();
         String path = video.getPath();  //get the video path
+        Log.e("FRAME_SAMPLE","path del video "+video.getPath());
         int width =204;
         int height = 300;
         try {
             Uri uri = Uri.parse(path);
             md.setDataSource(context, uri);
             Bitmap bmp = md.getFrameAtTime(2000);   //get the image
-
+            Log.e("FRAME_SAMPLE","aqui no llego");
             //rescale the frame sample
             Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             float originalWidth = bmp.getWidth(), originalHeight = bmp.getHeight();
@@ -110,9 +112,13 @@ public class auxiliar {
             Paint paint = new Paint();
             paint.setFilterBitmap(true);
             canvas.drawBitmap(bmp, transformation, paint);
-
+            Log.e("FRAME_SAMPLE", "fin redimensionado");
             try{//store the bitmap in the drawable folder
-                File file = new File (path);
+                Log.e("FRAME_SAMPLE","nombre del video "+video.getImagen());
+
+                File file = obtenerArchivoImagen(video.getImagen());
+                Log.e("FRAME_SAMPLE",file.getPath());
+//                File file = new File (path);
                 Log.d("CREAR_IMAGEN3","file creado");
                 FileOutputStream out = new FileOutputStream(file);
                 Log.d("CREAR_IMAGEN3","outputStream creado");
@@ -126,9 +132,11 @@ public class auxiliar {
             }catch(Exception ex){
                 Log.e("CAUSA_FILE",ex.getMessage());ex.printStackTrace();}
         } catch (IllegalArgumentException ex) {
+            Log.e("FRAME_SAMPLE","error illegalArgument");
             System.out.println("causa fd ilegal");ex.printStackTrace();
         } catch (RuntimeException ex) {
             System.out.println("causa fd runtime");ex.printStackTrace();
+            Log.e("FRAME_SAMPLE", "error runtimeException");
         }finally {
             try {
                 md.release();
@@ -138,6 +146,57 @@ public class auxiliar {
 
     }
 
+    public static File obtenerArchivoImagen(String nombreVideo){
+        File directorio;
+        //obtain the external or internal available directory
+        if(auxiliar.isExternalStorageWritable()){
+            directorio = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        }else{
+            directorio = Environment.getDataDirectory();
+        }
+        File f = new File(directorio.getPath()+"/"+auxiliar.carpeta);
+        if(!f.exists()){
+            f.mkdirs();
+        }
+        if(nombreVideo.contains(auxiliar.extension)){
+            nombreVideo = nombreVideo.substring(0,nombreVideo.indexOf("."));
+        }
+        File file = new File(f,nombreVideo+".jpeg");
+        return file;
+    }
+
+    public static int existeImagen(String nombreVideo){
+        if(nombreVideo.contains(auxiliar.extension)){
+            nombreVideo = nombreVideo.substring(0,nombreVideo.indexOf("."))+".jpeg";
+        }
+        File directorio;
+        //obtain the external or internal available directory
+        if(auxiliar.isExternalStorageWritable()){
+            directorio = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        }else{
+            directorio = Environment.getDataDirectory();
+        }
+        File f = new File(directorio.getPath()+"/"+auxiliar.carpeta);
+        if(!f.exists()){
+            f.mkdirs();
+        }
+        Log.e("FRAME_SAMPLE","directorio imagen "+f.getPath());
+        Log.e("FRAME_SAMPLE","nombre imagen "+nombreVideo);
+        String[] nombres = f.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.contains("video_");
+            }
+        });
+        if (nombres!=null){
+            for(int i=0; i<nombres.length; i++){
+                if (nombres[i].equalsIgnoreCase(nombreVideo)){
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
     /**
      *
      * @return name of a new video
@@ -148,7 +207,7 @@ public class auxiliar {
         String[] nombres = directorio.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
-                return filename.contains(".mp4");
+                return filename.contains(auxiliar.extension);
             }
         });
         if(nombres!=null){
@@ -168,7 +227,7 @@ public class auxiliar {
                 }
             }
         }
-        return "video_"+(ultimo+1)+".mp4";
+        return "video_"+(ultimo+1)+auxiliar.extension;
     }
 
     /* Checks if external storage is available for read and write */

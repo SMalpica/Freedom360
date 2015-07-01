@@ -70,6 +70,7 @@ public class GaleriaPrincipal extends Activity {
     private VideoAdapter videoAdapter;
     private AsyncVideoDownloader videoDownloader;
     private ArrayList<Video> lista;
+    private HorizontalListView lv;
 
     @Override
     @TargetApi(21)
@@ -121,7 +122,7 @@ public class GaleriaPrincipal extends Activity {
 
         //fill the gallery with the available videos
         lista = fillData(getApplicationContext());
-        HorizontalListView lv = (HorizontalListView)findViewById(R.id.galeria);
+        lv = (HorizontalListView)findViewById(R.id.galeria);
         Log.e("LISTA_LENGTH",String.valueOf(lista.size()));
         videoAdapter = new VideoAdapter(getApplicationContext(), lista);
         lv.setAdapter(videoAdapter);
@@ -194,13 +195,13 @@ public class GaleriaPrincipal extends Activity {
 
         @Override
         public View getView(int posicion, View convertView, final ViewGroup parent){
+            convertView=null;
             Log.e("GET_VIEW", "posicion de view "+posicion);
             //get the data item for this position
             Video video = (Video)getItem(posicion);
-            // Check if an existing view is being reused, otherwise inflate the view
-            if (convertView == null) {
-                convertView = LayoutInflater.from(contexto).inflate(R.layout.list_item, parent, false);
-            }
+            // always inflate the view so that old views do not appear twice
+            convertView = LayoutInflater.from(contexto).inflate(R.layout.list_item, parent, false);
+
             // Lookup view for data population
             ImageView item = (ImageView) convertView.findViewById(R.id.miniatura);
             // Populate the data into the template view using the data object
@@ -314,7 +315,7 @@ public class GaleriaPrincipal extends Activity {
 
         protected String doInBackground(URL... params){
             URL url;
-            String nombreVideo="video1.mp4";
+            String nombreVideo="video1"+auxiliar.extension;
             for(int i=0; i<params.length; i++){
                 try{
                     url = params[i];
@@ -376,6 +377,7 @@ public class GaleriaPrincipal extends Activity {
         protected void onPostExecute(String result){
             Video video = new Video(result,GaleriaPrincipal.this);
             lista.add(0,video);
+            lv.setSelection(0);
             videoAdapter.notifyDataSetChanged();
             progreso.cancel();
         }
