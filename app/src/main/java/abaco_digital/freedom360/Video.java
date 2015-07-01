@@ -1,12 +1,8 @@
 package abaco_digital.freedom360;
 
 import android.content.Context;
-import android.media.MediaMetadataRetriever;
 
-import java.io.File;
 import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 /**
  * Autor: Sandra Malpica Mallo

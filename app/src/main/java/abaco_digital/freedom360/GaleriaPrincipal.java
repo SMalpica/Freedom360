@@ -15,11 +15,12 @@ package abaco_digital.freedom360;
 //TODO: guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
-//TODO: ojo con las url al descargar
+//TODO: ojo con las url al descargar. control
 //TODO: gestionar errores con dialog y mensajes al usuario
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
 //TODO: doble tapback para salir de la aplicacion?
 //TODO: keyboard shows in tablet but not in smartphone (dialog editText)
+//TODO: asegurarse de que la pantalla no se bloquea al reproducir un video
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -29,14 +30,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,12 +49,10 @@ import android.view.Display;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -93,7 +88,7 @@ public class GaleriaPrincipal extends Activity {
 
         //use different layouts depending on the screen size
         LinearLayout inferior;
-        if(auxiliar.isTablet(getApplicationContext())){ //tablet layout
+        if(auxiliar.isTablet(getApplicationContext())){                         //tablet layout
             setContentView(R.layout.activity_galeria_principal);
             //Measure of the screen
             Display display = getWindowManager().getDefaultDisplay();
@@ -116,7 +111,7 @@ public class GaleriaPrincipal extends Activity {
             texto=(TextView)findViewById(R.id.textView);
             texto.setTypeface(face);
 
-        }else{                                      //smartphone layout
+        }else{                                                                  //smartphone layout
             setContentView(R.layout.movil_galeria_principal);
             //typeface serif (droid)
             TextView texto = (TextView)findViewById(R.id.textView);
@@ -132,7 +127,7 @@ public class GaleriaPrincipal extends Activity {
         lv.setAdapter(videoAdapter);
     }
 
-    /**/
+    /*searches for the downloaded videos to fill the app gallery*/
     public ArrayList<Video> fillData(Context context){
         File f = auxiliar.directorio;
         String[] nombres = f.list(new FilenameFilter() {
@@ -161,6 +156,8 @@ public class GaleriaPrincipal extends Activity {
         return salida;
     }
 
+
+
 /**
  * Autor: Sandra Malpica Mallo
  *
@@ -171,8 +168,6 @@ public class GaleriaPrincipal extends Activity {
  * Comments: manages the elements within the listview of the app's main
  * screen. Inflates the rowView and fills each element with data.
  */
-
-
     public class VideoAdapter extends BaseAdapter {
         private Context contexto;
         private List<Video> list;
@@ -217,6 +212,7 @@ public class GaleriaPrincipal extends Activity {
             if(id!=0){
                 item.setImageResource(id);
                 //TODO: setonclicklistener de los videos
+                //TODO: setonLongClickListener para borrar los videos de la galeria
                 if(!video.getImagen().equalsIgnoreCase("mas")){
                     //take out background color
                     item.setBackgroundColor(Color.TRANSPARENT);
@@ -233,11 +229,8 @@ public class GaleriaPrincipal extends Activity {
                         @Override
                         public boolean onLongClick(View v) {
                             Log.e("MAS_ONCLICK", "principio");
-//                ResourceDownloadDialog dialog = ResourceDownloadDialog.newInstance();
-//                dialog.show(getFragmentManager(),"ResourceDownloadDialog");
-                            // get prompts.xml view
                             LayoutInflater layoutInflater = LayoutInflater.from(GaleriaPrincipal.this);
-
+                            //inflate the dialog view
                             View promptView = layoutInflater.inflate(R.layout.popup, null);
 
                             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GaleriaPrincipal.this);
@@ -250,17 +243,18 @@ public class GaleriaPrincipal extends Activity {
                             // setup a dialog window
                             alertDialogBuilder
                                     .setTitle(R.string.titulo_popup)
+                                    //start download when "ok" is pressed
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             // get user input and set it to result
-//                                            System.out.println(input.getText());
                                             Log.e("ON_CLICK","principio");
                                             InputMethodManager imm = (InputMethodManager) GaleriaPrincipal.this.getSystemService(Context.INPUT_METHOD_SERVICE);
                                             imm.showSoftInput(enlace, InputMethodManager.SHOW_IMPLICIT);
                                             String path = enlace.getText().toString();
                                             Log.e("ON_CLICK",path);
                                             try{
-                                                //method for download found in http://www.insdout.com/snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
+                    //method for download found in http://www.insdout.com/
+                    // snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
                                                 URL url = new URL(path);
                                                 videoDownloader.execute(url);
 
@@ -269,7 +263,7 @@ public class GaleriaPrincipal extends Activity {
                                                 Log.e("ON_CLICK","malformedURL");
                                             }
                                         }
-                                    })
+                                    })//dismiss the dialog when cancel is pressed
                                     .setNegativeButton("Cancel",
                                             new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
@@ -280,7 +274,6 @@ public class GaleriaPrincipal extends Activity {
                             // create an alert dialog
                             AlertDialog alertD = alertDialogBuilder.create();
                             alertD.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-//                            alertD.getWindow().setSoftInputMode(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
                             alertD.show();
                             return true;
                         }
@@ -288,16 +281,6 @@ public class GaleriaPrincipal extends Activity {
                 }
             }
             item.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-        /*WindowManager wm = (WindowManager)contexto.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(outMetrics);
-        int altura = (outMetrics.heightPixels/2)-30;
-        convertView.setMinimumHeight(altura);
-        item.setMaxHeight(altura);
-        item.setMinimumHeight(altura);*/
-            //item.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            // Return the completed view to render on screen
             return convertView;
         }
     }
