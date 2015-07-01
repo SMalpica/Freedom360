@@ -142,9 +142,10 @@ public class GaleriaPrincipal extends Activity {
             for(String s:nombres){
                 Log.d("FILL_DATA_FILES", s);
                 Video aux = new Video(s,context);
-                aux.setPath(f.getPath()+"/"+s);
+                aux.setPath(f.getPath() + "/" + s);
                 aux.crearFrameSample();
                 salida.add(aux);
+
             }
         }
         Video aux = new Video("predef1",context);
@@ -152,6 +153,7 @@ public class GaleriaPrincipal extends Activity {
         aux = new Video("predef2",context);
         salida.add(aux);
         aux = new Video("mas",context);
+        Log.e("FILL_DATA_LLAMADO", "added mas");
         salida.add(aux);
         return salida;
     }
@@ -192,6 +194,7 @@ public class GaleriaPrincipal extends Activity {
 
         @Override
         public View getView(int posicion, View convertView, final ViewGroup parent){
+            Log.e("GET_VIEW", "posicion de view "+posicion);
             //get the data item for this position
             Video video = (Video)getItem(posicion);
             // Check if an existing view is being reused, otherwise inflate the view
@@ -247,20 +250,21 @@ public class GaleriaPrincipal extends Activity {
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             // get user input and set it to result
-                                            Log.e("ON_CLICK","principio");
+                                            Log.e("ON_CLICK", "principio");
                                             InputMethodManager imm = (InputMethodManager) GaleriaPrincipal.this.getSystemService(Context.INPUT_METHOD_SERVICE);
                                             imm.showSoftInput(enlace, InputMethodManager.SHOW_IMPLICIT);
                                             String path = enlace.getText().toString();
-                                            Log.e("ON_CLICK",path);
-                                            try{
-                    //method for download found in http://www.insdout.com/
-                    // snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
+                                            Log.e("ON_CLICK", path);
+                                            try {
+                                                //method for download found in http://www.insdout.com/
+                                                // snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
                                                 URL url = new URL(path);
+                                                videoDownloader = new AsyncVideoDownloader();
                                                 videoDownloader.execute(url);
 
-                                            }catch(MalformedURLException ex){
+                                            } catch (MalformedURLException ex) {
                                                 alertDialogBuilder.setMessage("Video not found. Bad URL");
-                                                Log.e("ON_CLICK","malformedURL");
+                                                Log.e("ON_CLICK", "malformedURL");
                                             }
                                         }
                                     })//dismiss the dialog when cancel is pressed
