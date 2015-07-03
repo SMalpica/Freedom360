@@ -22,7 +22,7 @@ package abaco_digital.freedom360;
 // keyboard shows in tablet but not in smartphone (dialog editText). Arreglado a lo bestia
 //TODO: asegurarse de que la pantalla no se bloquea al reproducir un video
 // ahora en el movil no se ve el fondo del horizontallistview. Arreglado. Faltaban las carpetas drawable dpi
-//TODO: eliminar texto del dialog cuando el usuario pulsa sobre el
+// eliminar texto del dialog cuando el usuario pulsa sobre el. HECHO
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -299,9 +299,11 @@ public class GaleriaPrincipal extends Activity {
                             alertDialogBuilder.setView(promptView);
 
                             final EditText enlace = (EditText) promptView.findViewById(R.id.enlaceDescarga);
+//                            http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
                             enlace.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    enlace.setText("");
                                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                                 }
