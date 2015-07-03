@@ -21,6 +21,7 @@ package abaco_digital.freedom360;
 //TODO: doble tapback para salir de la aplicacion?
 //TODO: keyboard shows in tablet but not in smartphone (dialog editText)
 //TODO: asegurarse de que la pantalla no se bloquea al reproducir un video
+//TODO: ahora en el movil no se ve el fondo del horizontallistview
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -201,6 +202,13 @@ public class GaleriaPrincipal extends Activity {
             Video video = (Video)getItem(posicion);
             // always inflate the view so that old views do not appear twice
             convertView = LayoutInflater.from(contexto).inflate(R.layout.list_item, parent, false);
+
+
+            /*ImageView imagenFondo = (ImageView)findViewById(R.id.imageView2);
+            imagenFondo.setImageResource(R.color.black_overlay);
+            imagenFondo.setScaleType(ImageView.ScaleType.CENTER_CROP);*/
+
+
 
             // Lookup view for data population
             ImageView item = (ImageView) convertView.findViewById(R.id.miniatura);
