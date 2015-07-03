@@ -21,7 +21,7 @@ package abaco_digital.freedom360;
 //TODO: doble tapback para salir de la aplicacion?
 //TODO: keyboard shows in tablet but not in smartphone (dialog editText)
 //TODO: asegurarse de que la pantalla no se bloquea al reproducir un video
-//TODO: ahora en el movil no se ve el fondo del horizontallistview
+// ahora en el movil no se ve el fondo del horizontallistview. Arreglado. Faltaban las carpetas drawable dpi
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -33,10 +33,12 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +49,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.Display;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -101,7 +104,7 @@ public class GaleriaPrincipal extends Activity {
             inferior=(LinearLayout)findViewById(R.id.layoutInferior);
             //half the space for the gallery
             superior.getLayoutParams().height=outMetrics.heightPixels/6;
-            inferior.getLayoutParams().height=outMetrics.heightPixels*3/6;
+//            inferior.getLayoutParams().height=outMetrics.heightPixels*3/6;
             HorizontalListView galeria = (HorizontalListView)findViewById(R.id.galeria);
             galeria.setMinimumHeight(inferior.getHeight());
             //force text and image have the same height in xml
@@ -207,11 +210,12 @@ public class GaleriaPrincipal extends Activity {
             /*ImageView imagenFondo = (ImageView)findViewById(R.id.imageView2);
             imagenFondo.setImageResource(R.color.black_overlay);
             imagenFondo.setScaleType(ImageView.ScaleType.CENTER_CROP);*/
-
-
+//            ((RelativeLayout) convertView).setGravity(Gravity.CENTER_VERTICAL);
 
             // Lookup view for data population
             ImageView item = (ImageView) convertView.findViewById(R.id.miniatura);
+//            int width =204;
+//            item.setMaxWidth(width);
             // Populate the data into the template view using the data object
             Log.e("VIDEO_ADAPTER_GETVIEW", video.getImagen());
             //parse the video name to get the image name
@@ -228,7 +232,7 @@ public class GaleriaPrincipal extends Activity {
                 if(!video.getImagen().equalsIgnoreCase("mas")){
                     //take out background color
                     item.setBackgroundColor(Color.TRANSPARENT);
-                    item.setPadding(0,0,0,0);
+//                    item.setPadding(0,0,0,0);
                 }else{
                     Log.e("SETEANDO_MAS", "entrando");
 
@@ -292,6 +296,7 @@ public class GaleriaPrincipal extends Activity {
                         }
                     });
                 }
+            }else{
             }
             item.setScaleType(ImageView.ScaleType.FIT_CENTER);
             return convertView;

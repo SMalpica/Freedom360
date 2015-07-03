@@ -93,7 +93,8 @@
             android:background="@drawable/espacio">
             <abaco_digital.freedom360.HorizontalListView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
                 android:id="@+id/galeria"
             />
         </LinearLayout>

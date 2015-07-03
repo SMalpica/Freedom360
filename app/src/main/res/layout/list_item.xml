@@ -5,10 +5,10 @@
     android:padding="3dp">
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="2sp"
         android:id="@+id/miniatura"
-        android:padding="3dp"
         android:src="@drawable/sinimagen"
         android:contentDescription="@string/legend_miniatura"
         android:background="#ff6a6a6a"
