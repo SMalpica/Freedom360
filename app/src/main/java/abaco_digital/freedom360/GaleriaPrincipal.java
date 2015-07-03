@@ -486,6 +486,9 @@ public class GaleriaPrincipal extends Activity {
         @Override
         protected void onPostExecute(String result){
             Video video = new Video(result,GaleriaPrincipal.this);
+            video.setPath(auxiliar.directorio.getPath()+"/"+result);
+            video.setURL(result);
+            video.crearFrameSample();
             lista.add(0,video);
             lv.setSelection(0);
             videoAdapter.notifyDataSetChanged();

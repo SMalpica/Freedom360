@@ -21,6 +21,7 @@ public class Video {
     private FileDescriptor fileDescriptor;
     private Context context;
     private int id;
+    private String url;
 
     public Video(String img, Context context){
         this.imagen = img;
@@ -59,4 +60,10 @@ public class Video {
     public void setID(int id){this.id = id;}
 
     public int getID(){return this.id;}
+
+    public void setURL (String url){
+        this.url = url;
+    }
+
+    public String getURL (){ return this.url;}
 }

@@ -25,8 +25,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class auxiliar {
 
@@ -89,6 +94,7 @@ public class auxiliar {
      * @param context context
      */
     public static void crearImagen(Video video, Context context){
+
         Log.e("FRAME_SAMPLE","en crear imagen");
         MediaMetadataRetriever md = new MediaMetadataRetriever();
         String path = video.getPath();  //get the video path
@@ -96,9 +102,14 @@ public class auxiliar {
         int width =204;
         int height = 300;
         try {
+//            FileInputStream fis = new FileInputStream(new File(video.getPath()));
+//            FileInputStream fis = new FileInputStream(principal.getFileStreamPath(video.getPath()));
+//            FileDescriptor fd = fis.getFD();
+//            md.setDataSource(fd);
+//            md.setDataSource(video.getURL(),new HashMap<String, String>());
             Uri uri = Uri.parse(path);
             md.setDataSource(context, uri);
-            Bitmap bmp = md.getFrameAtTime(2000);   //get the image
+            Bitmap bmp = md.getFrameAtTime(2000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);   //get the image
             Log.e("FRAME_SAMPLE","aqui no llego");
             //rescale the frame sample
             Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -137,12 +148,17 @@ public class auxiliar {
         } catch (RuntimeException ex) {
             System.out.println("causa fd runtime");ex.printStackTrace();
             Log.e("FRAME_SAMPLE", "error runtimeException");
-        }finally {
+        }/*catch(FileNotFoundException ex){
+            Log.e("FRAME_SAMPLE", "video no encontrado");
+        }catch(IOException ex){
+            Log.e("FRAME_SAMPLE", "excepcion entrada salida");
+        }*/
+        finally {
             try {
                 md.release();
-            } catch (RuntimeException ignored) {}
+            } catch (RuntimeException ignored) {
+            }
         }
-
 
     }
 
