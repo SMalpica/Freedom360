@@ -10,9 +10,9 @@ package abaco_digital.freedom360;
  * of the launch screen and sets different layouts depending on the device
  * used.
  */
-//TODO: imagenes galeria se recortan en tablet. arreglarlo
-//TODO: las imagenes not available no se ven en todos los moviles. Revisar
-//TODO: guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
+//imagenes galeria se recortan en tablet. arreglarlo. HECHO
+// las imagenes not available no se ven en todos los moviles. Revisar HEDHO
+// guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
 //TODO: ojo con las url al descargar. control
@@ -220,11 +220,12 @@ public class GaleriaPrincipal extends Activity {
             Log.e("VIDEO_ADAPTER_GETVIEW", video.getImagen());
             //parse the video name to get the image name
             int punto = video.getImagen().indexOf(".");
+            String nombre=video.getImagen();
             if(punto != -1){
-                video.setImagen(video.getImagen().substring(0, punto));
+                nombre = video.getImagen().substring(0, punto);
             }
             //get the image id
-            int id = contexto.getResources().getIdentifier(video.getImagen(), "drawable", contexto.getPackageName());
+            int id = contexto.getResources().getIdentifier(nombre, "drawable", contexto.getPackageName());
             if(id!=0){
                 item.setImageResource(id);
                 //TODO: setonclicklistener de los videos
@@ -296,7 +297,6 @@ public class GaleriaPrincipal extends Activity {
                         }
                     });
                 }
-            }else{
             }
             item.setScaleType(ImageView.ScaleType.FIT_CENTER);
             return convertView;
