@@ -15,11 +15,11 @@ package abaco_digital.freedom360;
 // guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
-//TODO: ojo con las url al descargar. control
+// ojo con las url al descargar. control. si no tiene protocolo anyadir http y a correr. A correr hecho. http hecho
 //TODO: gestionar errores con dialog y mensajes al usuario
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
 //TODO: doble tapback para salir de la aplicacion?
-//TODO: keyboard shows in tablet but not in smartphone (dialog editText)
+// keyboard shows in tablet but not in smartphone (dialog editText). Arreglado a lo bestia
 //TODO: asegurarse de que la pantalla no se bloquea al reproducir un video
 // ahora en el movil no se ve el fondo del horizontallistview. Arreglado. Faltaban las carpetas drawable dpi
 //TODO: eliminar texto del dialog cuando el usuario pulsa sobre el
@@ -37,10 +37,13 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -166,8 +169,42 @@ public class GaleriaPrincipal extends Activity {
         return salida;
     }
 
+    public void sacarTeclado(final EditText enlace){
+        enlace.setFocusable(true);
+        enlace.setFocusableInTouchMode(true);
+        enlace.requestFocus();
+//                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                            imm.showSoftInput(enlace, InputMethodManager.SHOW_IMPLICIT);
+        enlace.postDelayed(new Runnable() {
+            public void run() {
+//              ((EditText) findViewById(R.id.et_find)).requestFocus();
+//
 
+//                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                imm.showSoftInput(enlace, InputMethodManager.SHOW_IMPLICIT);
 
+                enlace.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                enlace.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+            }
+        }, 300);
+    }
+
+    //http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
+    public static void showKeyboard(Activity activity) {
+        if (activity != null) {
+            activity.getWindow()
+                    .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
+
+    //http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
+    public static void hideKeyboard(Activity activity) {
+        if (activity != null) {
+            activity.getWindow()
+                    .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
+    }
 /**
  * Autor: Sandra Malpica Mallo
  *
@@ -199,6 +236,8 @@ public class GaleriaPrincipal extends Activity {
         public int getCount(){
             return list.size();
         }
+
+
 
         @Override
         public View getView(int posicion, View convertView, final ViewGroup parent){
@@ -260,11 +299,50 @@ public class GaleriaPrincipal extends Activity {
                             alertDialogBuilder.setView(promptView);
 
                             final EditText enlace = (EditText) promptView.findViewById(R.id.enlaceDescarga);
+                            enlace.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                                }
+                            });
+//                            sacarTeclado(enlace);
+                            /*enlace.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                @Override
+                                public void onFocusChange(View v, boolean hasFocus) {
+                                    if (!hasFocus) {
+                                        hideKeyboard(GaleriaPrincipal.this);
+                                    } else {
+                                        showKeyboard(GaleriaPrincipal.this);
+                                    }
+                                }
+                            });*/
+
+                            /*//este tampoco va
+                            (new Handler()).postDelayed(new Runnable() {
+
+                                public void run() {
+//              ((EditText) findViewById(R.id.et_find)).requestFocus();
+//
+                                    EditText yourEditText = enlace;
+//              InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//              imm.showSoftInput(yourEditText, InputMethodManager.SHOW_IMPLICIT);
+
+                                    yourEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                                    yourEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+                                }
+                            }, 200);*/
+                            /*//no funciona
+                            enlace.requestFocus();
+                            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            // only will trigger it if no physical keyboard is open
+                            mgr.showSoftInput(enlace, InputMethodManager.SHOW_IMPLICIT);*/
 
                             // setup a dialog window
                             alertDialogBuilder
                                     .setTitle(R.string.titulo_popup)
-                                    //start download when "ok" is pressed
+                                            //start download when "ok" is pressed
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             // get user input and set it to result
@@ -277,11 +355,24 @@ public class GaleriaPrincipal extends Activity {
                                                 //method for download found in http://www.insdout.com/
                                                 // snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
                                                 URL url = new URL(path);
+                                                if(url.getProtocol()==null){
+                                                    path="http://"+path;
+                                                    url = new URL(path);
+                                                }
                                                 videoDownloader = new AsyncVideoDownloader();
                                                 videoDownloader.execute(url);
 
                                             } catch (MalformedURLException ex) {
-                                                alertDialogBuilder.setMessage("Video not found. Bad URL");
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
+                                                builder.setTitle("Error. Bad URL. Make sure you use a valid format (ie: \"http://url.com\")")
+                                                        .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.cancel();
+                                                            }
+                                                        });
+                                                AlertDialog d = builder.create();
+                                                d.show();
                                                 Log.e("ON_CLICK", "malformedURL");
                                             }
                                         }
