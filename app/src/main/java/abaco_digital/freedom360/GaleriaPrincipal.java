@@ -22,6 +22,7 @@ package abaco_digital.freedom360;
 //TODO: keyboard shows in tablet but not in smartphone (dialog editText)
 //TODO: asegurarse de que la pantalla no se bloquea al reproducir un video
 // ahora en el movil no se ve el fondo del horizontallistview. Arreglado. Faltaban las carpetas drawable dpi
+//TODO: eliminar texto del dialog cuando el usuario pulsa sobre el
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -46,6 +47,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.Display;
@@ -92,7 +95,7 @@ public class GaleriaPrincipal extends Activity {
         videoDownloader = new AsyncVideoDownloader();
 
         //use different layouts depending on the screen size
-        LinearLayout inferior;
+        FrameLayout inferior;
         if(auxiliar.isTablet(getApplicationContext())){                         //tablet layout
             setContentView(R.layout.activity_galeria_principal);
             //Measure of the screen
@@ -101,7 +104,7 @@ public class GaleriaPrincipal extends Activity {
             display.getMetrics(outMetrics);
             //assign layout through id
             LinearLayout superior =(LinearLayout)findViewById(R.id.layoutSuperior);
-            inferior=(LinearLayout)findViewById(R.id.layoutInferior);
+            inferior=(FrameLayout)findViewById(R.id.layoutInferior);
             //half the space for the gallery
             superior.getLayoutParams().height=outMetrics.heightPixels/6;
 //            inferior.getLayoutParams().height=outMetrics.heightPixels*3/6;
@@ -228,17 +231,18 @@ public class GaleriaPrincipal extends Activity {
             int id = contexto.getResources().getIdentifier(nombre, "drawable", contexto.getPackageName());
             if(id!=0){
                 item.setImageResource(id);
+                item.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 //TODO: setonclicklistener de los videos
                 //TODO: setonLongClickListener para borrar los videos de la galeria
                 if(!video.getImagen().equalsIgnoreCase("mas")){
                     //take out background color
                     item.setBackgroundColor(Color.TRANSPARENT);
-//                    item.setPadding(0,0,0,0);
+                    item.setPadding(0, 0, 0, 0);
                 }else{
                     Log.e("SETEANDO_MAS", "entrando");
-
                     item.setClickable(true);
-
+                    /*item.getLayoutParams().height= RelativeLayout.LayoutParams.WRAP_CONTENT;
+                    item.setPadding(item.getPaddingLeft(),item.getPaddingTop()*3,item.getPaddingRight(),item.getPaddingBottom());*/
                     //set the actions to be done when the image is pressed
                     item.setOnLongClickListener(new View.OnLongClickListener() {
                         /*based on http://examples.javacodegeeks.com/android/core/ui/

@@ -82,21 +82,26 @@
         />
 
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
-            android:id="@+id/layoutInferior"
-            android:background="@drawable/espacio">
+            android:id="@+id/layoutInferior">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/espacio"
+                android:scaleType="centerCrop"/>
             <abaco_digital.freedom360.HorizontalListView
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/galeria"
+                android:gravity="center_vertical"
             />
-        </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 </FrameLayout>
