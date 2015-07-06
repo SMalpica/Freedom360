@@ -16,13 +16,15 @@ package abaco_digital.freedom360;
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //TODO: borrar videos con longclic
 // ojo con las url al descargar. control. si no tiene protocolo anyadir http y a correr. A correr hecho. http hecho
-//TODO: gestionar errores con dialog y mensajes al usuario
+//TODO: gestionar errores con dialog y mensajes al usuario. En ello. Falta el de tam video
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
 //TODO: doble tapback para salir de la aplicacion?
 // keyboard shows in tablet but not in smartphone (dialog editText). Arreglado a lo bestia
 //TODO: asegurarse de que la pantalla no se bloquea al reproducir un video
 // ahora en el movil no se ve el fondo del horizontallistview. Arreglado. Faltaban las carpetas drawable dpi
 // eliminar texto del dialog cuando el usuario pulsa sobre el. HECHO
+// coger la imagen para los videos que no son predefinidos. Hecho
+//TODO: actualizar lista galeria al borrar un video
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -241,11 +243,11 @@ public class GaleriaPrincipal extends Activity {
 
 
         @Override
-        public View getView(int posicion, View convertView, final ViewGroup parent){
+        public View getView(final int posicion, View convertView, final ViewGroup parent){
             convertView=null;
             Log.e("GET_VIEW", "posicion de view "+posicion);
             //get the data item for this position
-            Video video = (Video)getItem(posicion);
+            final Video video = (Video)getItem(posicion);
             // always inflate the view so that old views do not appear twice
             convertView = LayoutInflater.from(contexto).inflate(R.layout.list_item, parent, false);
 
@@ -268,7 +270,6 @@ public class GaleriaPrincipal extends Activity {
                 nombre = video.getImagen().substring(0, punto);
             }
             //get the image id
-            //TODO: coger la imagen para los videos que no son predefinidos
             int id = contexto.getResources().getIdentifier(nombre, "drawable", contexto.getPackageName());
             if(id!=0){
                 item.setImageResource(id);
@@ -364,6 +365,7 @@ public class GaleriaPrincipal extends Activity {
                             return true;
                         }
                     });
+                    item.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
             }else{
                 Log.e("FRAME_SAMPLE","archivos que no estan dentro apk");
@@ -381,8 +383,51 @@ public class GaleriaPrincipal extends Activity {
                     RelativeLayout padre = (RelativeLayout)findViewById(R.id.padre);
                     texto.setGravity(Gravity.CENTER_HORIZONTAL);
                     texto.setPadding(15,15,15,15);
-                    padre.addView(texto);
+                    if(padre!=null){padre.addView(texto);}
                 }
+            }
+            //TODO: borrar imagenes tambien al borrar el video
+            if(!video.getImagen().equals("mas")){
+                item.setOnLongClickListener(new View.OnLongClickListener(){
+                    public boolean onLongClick (View v){
+                        final File archivo = new File(auxiliar.directorio,video.getImagen());
+                        if(archivo.exists()){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
+                            builder.setTitle("Are you sure you want to delete "+video.getImagen()+"?")
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            lv.removeViewAt(posicion);
+                                            archivo.delete();
+                                            videoAdapter.notifyDataSetChanged();
+                                            dialog.cancel();
+                                        }
+                                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                            AlertDialog d = builder.create();
+                            d.show();
+                            Log.e("ON_LONG_CLICK", "borrar video");
+                            return true;
+                        }else{
+                            AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
+                            builder.setTitle("File "+video.getImagen()+" not found. Delete Manually.")
+                                    .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            AlertDialog d = builder.create();
+                            d.show();
+                            Log.e("ON_LONG_CLICK", "video no encontrado");
+                            return false;
+                        }
+                    }
+                });
             }
 //            item.setScaleType(ImageView.ScaleType.FIT_CENTER);
 //            item.setScaleType(ImageView.ScaleType.CENTER_CROP);
