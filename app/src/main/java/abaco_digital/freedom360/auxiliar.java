@@ -33,6 +33,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
 
+import wseemann.media.FFmpegMediaMetadataRetriever;
+
 public class auxiliar {
 
     protected final static String fuente = "fonts/DroidSerif-Regular.ttf";

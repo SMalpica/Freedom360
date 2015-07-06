@@ -303,7 +303,10 @@ public class GaleriaPrincipal extends Activity {
                             enlace.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    enlace.setText("");
+                                    if(enlace.getText().toString().equals("insert video URL")){
+                                        enlace.setText("");
+                                    }
+                                    Log.e("TEXTO",enlace.getText().toString());
                                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                                 }
