@@ -35,6 +35,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -267,6 +268,7 @@ public class GaleriaPrincipal extends Activity {
                 nombre = video.getImagen().substring(0, punto);
             }
             //get the image id
+            //TODO: coger la imagen para los videos que no son predefinidos
             int id = contexto.getResources().getIdentifier(nombre, "drawable", contexto.getPackageName());
             if(id!=0){
                 item.setImageResource(id);
@@ -280,8 +282,6 @@ public class GaleriaPrincipal extends Activity {
                 }else{
                     Log.e("SETEANDO_MAS", "entrando");
                     item.setClickable(true);
-                    /*item.getLayoutParams().height= RelativeLayout.LayoutParams.WRAP_CONTENT;
-                    item.setPadding(item.getPaddingLeft(),item.getPaddingTop()*3,item.getPaddingRight(),item.getPaddingBottom());*/
                     //set the actions to be done when the image is pressed
                     item.setOnLongClickListener(new View.OnLongClickListener() {
                         /*based on http://examples.javacodegeeks.com/android/core/ui/
@@ -311,38 +311,6 @@ public class GaleriaPrincipal extends Activity {
                                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                                 }
                             });
-//                            sacarTeclado(enlace);
-                            /*enlace.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                                @Override
-                                public void onFocusChange(View v, boolean hasFocus) {
-                                    if (!hasFocus) {
-                                        hideKeyboard(GaleriaPrincipal.this);
-                                    } else {
-                                        showKeyboard(GaleriaPrincipal.this);
-                                    }
-                                }
-                            });*/
-
-                            /*//este tampoco va
-                            (new Handler()).postDelayed(new Runnable() {
-
-                                public void run() {
-//              ((EditText) findViewById(R.id.et_find)).requestFocus();
-//
-                                    EditText yourEditText = enlace;
-//              InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//              imm.showSoftInput(yourEditText, InputMethodManager.SHOW_IMPLICIT);
-
-                                    yourEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-                                    yourEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-
-                                }
-                            }, 200);*/
-                            /*//no funciona
-                            enlace.requestFocus();
-                            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            // only will trigger it if no physical keyboard is open
-                            mgr.showSoftInput(enlace, InputMethodManager.SHOW_IMPLICIT);*/
 
                             // setup a dialog window
                             alertDialogBuilder
@@ -397,8 +365,27 @@ public class GaleriaPrincipal extends Activity {
                         }
                     });
                 }
+            }else{
+                Log.e("FRAME_SAMPLE","archivos que no estan dentro apk");
+                File archivoImagen = auxiliar.obtenerArchivoImagen(video.getImagen());
+                if(archivoImagen.exists()){
+                    item.setImageURI(Uri.parse(archivoImagen.getAbsolutePath()));
+                    item.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    item.setBackgroundColor(Color.TRANSPARENT);
+                    item.setPadding(0, 0, 0, 0);
+                }else{
+                    Log.e("FRAME_SAMPLE","no encontrada imagen");
+                    //set a text with the video's title instead
+                    TextView texto = new TextView(getApplicationContext());
+                    texto.setText(video.getImagen());
+                    RelativeLayout padre = (RelativeLayout)findViewById(R.id.padre);
+                    texto.setGravity(Gravity.CENTER_HORIZONTAL);
+                    texto.setPadding(15,15,15,15);
+                    padre.addView(texto);
+                }
             }
-            item.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//            item.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//            item.setScaleType(ImageView.ScaleType.CENTER_CROP);
             return convertView;
         }
     }

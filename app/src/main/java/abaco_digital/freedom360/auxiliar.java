@@ -21,7 +21,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -98,70 +101,91 @@ public class auxiliar {
     public static void crearImagen(Video video, Context context){
 
         Log.e("FRAME_SAMPLE","en crear imagen");
-        MediaMetadataRetriever md = new MediaMetadataRetriever();
-        String path = video.getPath();  //get the video path
-        Log.e("FRAME_SAMPLE","path del video "+video.getPath());
-        int width =204;
-        int height = 300;
-        try {
-//            FileInputStream fis = new FileInputStream(new File(video.getPath()));
-//            FileInputStream fis = new FileInputStream(principal.getFileStreamPath(video.getPath()));
-//            FileDescriptor fd = fis.getFD();
-//            md.setDataSource(fd);
-//            md.setDataSource(video.getURL(),new HashMap<String, String>());
-            Uri uri = Uri.parse(path);
-            md.setDataSource(context, uri);
-            Bitmap bmp = md.getFrameAtTime(2000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);   //get the image
-            Log.e("FRAME_SAMPLE","aqui no llego");
-            //rescale the frame sample
-            Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            float originalWidth = bmp.getWidth(), originalHeight = bmp.getHeight();
-            Canvas canvas = new Canvas(background);
-            float scale = width/originalWidth;
-            float xTranslation = 0.0f, yTranslation = (height - originalHeight * scale)/2.0f;
-            Matrix transformation = new Matrix();
-            transformation.postTranslate(xTranslation, yTranslation);
-            transformation.preScale(scale, scale);
-            Paint paint = new Paint();
-            paint.setFilterBitmap(true);
-            canvas.drawBitmap(bmp, transformation, paint);
-            Log.e("FRAME_SAMPLE", "fin redimensionado");
-            try{//store the bitmap in the drawable folder
-                Log.e("FRAME_SAMPLE","nombre del video "+video.getImagen());
+        /*MediaMetadataRetriever md = new MediaMetadataRetriever();
+        String path = video.getPath();  //get the video path*/
 
-                File file = obtenerArchivoImagen(video.getImagen());
-                Log.e("FRAME_SAMPLE",file.getPath());
-//                File file = new File (path);
-                Log.d("CREAR_IMAGEN3","file creado");
-                FileOutputStream out = new FileOutputStream(file);
-                Log.d("CREAR_IMAGEN3","outputStream creado");
-                bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
-                Log.d("CREAR_IMAGEN3", "bmp compressed");
-                out.flush();
-                out.close(); //close the stream
-                Log.d("CREAR_IMAGEN3", "outputStream closed");
-                MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
-                Log.d("CREAR_IMAGEN3", "imagen guardada");
-            }catch(Exception ex){
-                Log.e("CAUSA_FILE",ex.getMessage());ex.printStackTrace();}
-        } catch (IllegalArgumentException ex) {
-            Log.e("FRAME_SAMPLE","error illegalArgument");
-            System.out.println("causa fd ilegal");ex.printStackTrace();
-        } catch (RuntimeException ex) {
-            System.out.println("causa fd runtime");ex.printStackTrace();
-            Log.e("FRAME_SAMPLE", "error runtimeException");
-        }/*catch(FileNotFoundException ex){
-            Log.e("FRAME_SAMPLE", "video no encontrado");
-        }catch(IOException ex){
-            Log.e("FRAME_SAMPLE", "excepcion entrada salida");
-        }*/
-        finally {
+
+        File file = new File(directorio,video.getImagen());
+        Log.e("FRAME_SAMPLE","path del video "+file.getPath());
+        FFmpegMediaMetadataRetriever md = new FFmpegMediaMetadataRetriever();
+        //check that file exists
+        Log.e("SYSO", "existe: " + file.exists());
+        Log.e("SYSO", "nombre: " + file.getAbsolutePath());
+        Bitmap bmp = null;
+
+        try{
+            //set the manager's data source
+            md.setDataSource(file.getAbsolutePath());
+            //take frame, second 2, closest sync frame found
+            bmp = md.getFrameAtTime(2000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            md.release();   //release the manager
+
+        }catch(IllegalArgumentException ex){Log.e("METADATA","illegal argument");}
+
+        //if frame couldn't be taken
+        if(bmp != null){
+            //set a text with the video's title instead
+            /*TextView texto = new TextView(principal.getApplicationContext());
+            texto.setText(file.getName());
+            RelativeLayout padre = (RelativeLayout)findViewById(R.id.padre);
+            texto.setGravity(Gravity.CENTER_HORIZONTAL);
+            texto.setPadding(15,15,15,15);
+            padre.addView(texto);*/
+//            String texto = video.getImagen();
+            //success
+
+            //set the imageview source and scale it accordingly to the available size
+            /*ImageView view = (ImageView) findViewById(R.id.imageView);
+            view.setImageBitmap(bmp);
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);*/
+            int width =204;
+            int height = 300;
             try {
-                md.release();
-            } catch (RuntimeException ignored) {
+                Log.e("FRAME_SAMPLE","aqui no llego");
+                //rescale the frame sample
+                Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                float originalWidth = bmp.getWidth(), originalHeight = bmp.getHeight();
+                Canvas canvas = new Canvas(background);
+                float scale = width/originalWidth;
+                float xTranslation = 0.0f, yTranslation = (height - originalHeight * scale)/2.0f;
+                Matrix transformation = new Matrix();
+                transformation.postTranslate(xTranslation, yTranslation);
+                transformation.preScale(scale, scale);
+                Paint paint = new Paint();
+                paint.setFilterBitmap(true);
+                canvas.drawBitmap(bmp, transformation, paint);
+                Log.e("FRAME_SAMPLE", "fin redimensionado");
+                try{//store the bitmap in the drawable folder
+                    Log.e("FRAME_SAMPLE","nombre del video "+video.getImagen());
+
+                    File files = obtenerArchivoImagen(video.getImagen());
+                    Log.e("FRAME_SAMPLE",files.getPath());
+//                File file = new File (path);
+                    Log.d("CREAR_IMAGEN3","file creado");
+                    FileOutputStream out = new FileOutputStream(files);
+                    Log.d("CREAR_IMAGEN3","outputStream creado");
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
+                    Log.d("CREAR_IMAGEN3", "bmp compressed");
+                    out.flush();
+                    out.close(); //close the stream
+                    Log.d("CREAR_IMAGEN3", "outputStream closed");
+                    MediaStore.Images.Media.insertImage(context.getContentResolver(), files.getAbsolutePath(), files.getName(), files.getName());
+                    Log.d("CREAR_IMAGEN3", "imagen guardada");
+                }catch(Exception ex){
+                    Log.e("CAUSA_FILE",ex.getMessage());ex.printStackTrace();}
+            } catch (IllegalArgumentException ex) {
+                Log.e("FRAME_SAMPLE","error illegalArgument");
+                System.out.println("causa fd ilegal");ex.printStackTrace();
+            } catch (RuntimeException ex) {
+                System.out.println("causa fd runtime");ex.printStackTrace();
+                Log.e("FRAME_SAMPLE", "error runtimeException");
+            }finally {
+                try {
+                    md.release();
+                } catch (RuntimeException ignored) {
+                }
             }
         }
-
     }
 
     public static File obtenerArchivoImagen(String nombreVideo){
@@ -184,6 +208,7 @@ public class auxiliar {
     }
 
     public static int existeImagen(String nombreVideo){
+        Log.e("FRAME_SAMPLE","en existe imagen, nombre video: "+nombreVideo);
         if(nombreVideo.contains(auxiliar.extension)){
             nombreVideo = nombreVideo.substring(0,nombreVideo.indexOf("."))+".jpeg";
         }
