@@ -14,17 +14,17 @@ package abaco_digital.freedom360;
 // las imagenes not available no se ven en todos los moviles. Revisar HEDHO
 // guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
-//TODO: borrar videos con longclic
+//notTODO: borrar videos con longclic.
+//TODO: actualizar la galeria al borrar un video
 // ojo con las url al descargar. control. si no tiene protocolo anyadir http y a correr. A correr hecho. http hecho
-//TODO: gestionar errores con dialog y mensajes al usuario. En ello. Falta el de tam video
+//TODO: gestionar errores con dialog y mensajes al usuario. En ello. Falta el de tamano video video
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
-//TODO: doble tapback para salir de la aplicacion?
+//TODO: doble tapback para salir de la aplicacion? Uno vale tambien
 // keyboard shows in tablet but not in smartphone (dialog editText). Arreglado a lo bestia
-//TODO: asegurarse de que la pantalla no se bloquea al reproducir un video
+//notTODO: asegurarse de que la pantalla no se bloquea al reproducir un video
 // ahora en el movil no se ve el fondo del horizontallistview. Arreglado. Faltaban las carpetas drawable dpi
 // eliminar texto del dialog cuando el usuario pulsa sobre el. HECHO
 // coger la imagen para los videos que no son predefinidos. Hecho
-//TODO: actualizar lista galeria al borrar un video
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -33,6 +33,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -275,7 +276,6 @@ public class GaleriaPrincipal extends Activity {
                 item.setImageResource(id);
                 item.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 //TODO: setonclicklistener de los videos
-                //TODO: setonLongClickListener para borrar los videos de la galeria
                 if(!video.getImagen().equalsIgnoreCase("mas")){
                     //take out background color
                     item.setBackgroundColor(Color.TRANSPARENT);
@@ -387,6 +387,7 @@ public class GaleriaPrincipal extends Activity {
                 }
             }
             //TODO: borrar imagenes tambien al borrar el video
+            //Actualizar bien galeria al borrar el video
             if(!video.getImagen().equals("mas")){
                 item.setOnLongClickListener(new View.OnLongClickListener(){
                     public boolean onLongClick (View v){
@@ -426,6 +427,18 @@ public class GaleriaPrincipal extends Activity {
                             Log.e("ON_LONG_CLICK", "video no encontrado");
                             return false;
                         }
+                    }
+                });
+                //launch activity player
+                item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent (GaleriaPrincipal.this, MainActivity.class);
+                        //send the URI
+                        intent.putExtra("TITULO",video.getImagen());
+//                        intent.putExtra("URI",video.getUri().toString());
+                        Log.e("ON_CLICK","video clicado, abrir nueva actividad");
+                        startActivity(intent);
                     }
                 });
             }

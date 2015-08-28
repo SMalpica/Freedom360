@@ -66,4 +66,8 @@ public class Video {
     }
 
     public String getURL (){ return this.url;}
+
+    public void setUri(){
+
+    }
 }
