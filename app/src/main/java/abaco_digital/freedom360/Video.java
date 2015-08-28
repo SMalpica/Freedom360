@@ -1,8 +1,10 @@
 package abaco_digital.freedom360;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileDescriptor;
 
 /**
@@ -22,6 +24,7 @@ public class Video {
     private Context context;
     private int id;
     private String url;
+    private Uri uri;
 
     public Video(String img, Context context){
         this.imagen = img;

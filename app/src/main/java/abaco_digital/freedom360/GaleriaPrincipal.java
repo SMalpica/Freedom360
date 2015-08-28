@@ -275,7 +275,6 @@ public class GaleriaPrincipal extends Activity {
             if(id!=0){
                 item.setImageResource(id);
                 item.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                //TODO: setonclicklistener de los videos
                 if(!video.getImagen().equalsIgnoreCase("mas")){
                     //take out background color
                     item.setBackgroundColor(Color.TRANSPARENT);
@@ -436,6 +435,7 @@ public class GaleriaPrincipal extends Activity {
                         Intent intent = new Intent (GaleriaPrincipal.this, MainActivity.class);
                         //send the URI
                         intent.putExtra("TITULO",video.getImagen());
+                        intent.putExtra("PATH",video.getPath());
 //                        intent.putExtra("URI",video.getUri().toString());
                         Log.e("ON_CLICK","video clicado, abrir nueva actividad");
                         startActivity(intent);
@@ -459,7 +459,7 @@ public class GaleriaPrincipal extends Activity {
      * Comments: async task used to download the videos of the app.
      */
     public class AsyncVideoDownloader extends AsyncTask<URL,Integer,String>{
-        //TODO: dar opcion de cancelar en las descargas
+        //TODO: dar opcion de cancelar en las descargas. No necesaria
         private ProgressDialog progreso;
         @Override
         protected void onPreExecute() {
@@ -541,6 +541,7 @@ public class GaleriaPrincipal extends Activity {
             lv.setSelection(0);
             videoAdapter.notifyDataSetChanged();
             progreso.cancel();
+            Log.e("GALLERY","setpath to the video");
         }
     }
 }

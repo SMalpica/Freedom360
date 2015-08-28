@@ -2,6 +2,7 @@ package abaco_digital.freedom360;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import org.rajawali3d.surface.RajawaliSurfaceView;
 
+import java.io.File;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -64,9 +66,14 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         principal = surface;
         // Add mSurface to your root view
         addContentView(surface, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT));
-        renderer = new Renderer(this);  //creates the renderer
+        //retrieve the video information
+        Intent intent = getIntent();
+        String nombreVideo=intent.getStringExtra("TITULO");
+        String videoPath = intent.getStringExtra("PATH");
+        Log.e("PLAYER","titulo del video "+nombreVideo);
+        Log.e("PLAYER", "path del video " + videoPath);
+        renderer = new Renderer(this,videoPath,nombreVideo);  //creates the renderer
         surface.setSurfaceRenderer(renderer);   //sets the surface renderer
-
 
         /******************************************************************************/
         /*                            media player controls                           */

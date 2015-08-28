@@ -12,6 +12,7 @@ import org.rajawali3d.materials.textures.StreamingTexture;
 import org.rajawali3d.primitives.Sphere;
 import org.rajawali3d.renderer.RajawaliRenderer;
 
+import java.io.File;
 import java.io.IOException;
 
 //notTODO: cambiar esfera predeterminada por esfera bien hecha
@@ -56,13 +57,17 @@ public class Renderer extends RajawaliRenderer {
     private final int cardboardMode=2;//cardboard mode.
     private int mode;               //actual playback mode
     private CamaraActualizada arcballCamera;    //arcballCamera that looks at the sphere
+    private final String videoPath;
+    private final String videoName;
 
     /**Renderer constructor, initializes its main values*/
-    public Renderer(Context context){
+    public Renderer(Context context, String vPath, String vName){
         super(context);
         this.context = context;
         setFrameRate(30);   //sets the renderer frame rate
         mode=touchMode;     //initial mode: touch mode
+        videoPath=vPath;
+        videoName=vName;
     }
 
     public void onTouchEvent(MotionEvent event){
@@ -78,7 +83,19 @@ public class Renderer extends RajawaliRenderer {
         //try to set the mediaPLayer data source
         mMediaPlayer = new MediaPlayer();
         try{
-            mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.pyrex));
+            if(videoPath==null){    //case: default app video
+//                mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.pyrex));
+                int id;
+                if(videoName.equalsIgnoreCase("predef1")){
+                    id=context.getResources().getIdentifier("formigal","raw",context.getPackageName());
+                }else{
+                    id=context.getResources().getIdentifier("pyrex","raw",context.getPackageName());
+                }
+
+                mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + id));
+            }else{                  //case: downloaded video
+                mMediaPlayer.setDataSource(Uri.fromFile(new File(videoPath)).getPath());
+            }
         }catch(IOException ex){
             Log.e("ERROR","couldn attach data source to the media player");
         }
