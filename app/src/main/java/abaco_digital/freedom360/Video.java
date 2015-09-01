@@ -25,10 +25,29 @@ public class Video {
     private int id;
     private String url;
     private Uri uri;
+    long tiempoInicial;
+    boolean pulsado;
 
     public Video(String img, Context context){
         this.imagen = img;
         this.context=context;
+        pulsado = false;
+    }
+
+    public boolean isPulsado(){
+        return pulsado;
+    }
+
+    public long getTiempo(){
+        return this.tiempoInicial;
+    }
+
+    public void setTiempo(long time){
+        this.tiempoInicial=time;
+    }
+
+    public void setPulsado(boolean p){
+        this.pulsado=p;
     }
 
     public void setPath(String p){

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -72,6 +73,10 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         String videoPath = intent.getStringExtra("PATH");
         Log.e("PLAYER","titulo del video "+nombreVideo);
         Log.e("PLAYER", "path del video " + videoPath);
+//        File f = new File(videoPath);
+//        Uri uri = Uri.fromFile(f);
+//        Log.e("PLAYER",uri.toString());
+//        Log.e("PLAYER","existe "+f.exists());
         renderer = new Renderer(this,videoPath,nombreVideo);  //creates the renderer
         surface.setSurfaceRenderer(renderer);   //sets the surface renderer
 

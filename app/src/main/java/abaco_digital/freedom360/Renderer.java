@@ -38,6 +38,8 @@ import java.io.IOException;
 //notTODO: poner en los textview del control del video el tiempo total y el actual.
 //notTODO: seekbar deja de funcionar al bloquear y desbloquear el movil
 //TODO: . The Main Activity should deactivate the sensors whenever it is not running so that power can be saved
+//TODO: probar con el modo giroscopio custom que encontramos por internet o siguiendo el paper (lo tienes en el correo)
+//TODO: utilizar ecuaciones para movimiento normal
 
 /**
  * Author: Sandra Malpica Mallo
@@ -84,14 +86,12 @@ public class Renderer extends RajawaliRenderer {
         mMediaPlayer = new MediaPlayer();
         try{
             if(videoPath==null){    //case: default app video
-//                mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.pyrex));
                 int id;
                 if(videoName.equalsIgnoreCase("predef1")){
                     id=context.getResources().getIdentifier("formigal","raw",context.getPackageName());
                 }else{
                     id=context.getResources().getIdentifier("pyrex","raw",context.getPackageName());
                 }
-
                 mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + id));
             }else{                  //case: downloaded video
                 mMediaPlayer.setDataSource(Uri.fromFile(new File(videoPath)).getPath());

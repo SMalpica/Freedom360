@@ -287,8 +287,11 @@ public class auxiliar {
         File directorio;
         //obtain the external or internal available directory
         if(auxiliar.isExternalStorageWritable()){
+            Log.e("TABLET","external storage is writable");
+            Log.e("TABLET","media state "+Environment.getExternalStorageState());
             directorio = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
         }else{
+            Log.e("TABLET","external storage is not writable");
             directorio = Environment.getDataDirectory();
         }
         File f = new File(directorio.getPath()+"/"+auxiliar.carpeta);
