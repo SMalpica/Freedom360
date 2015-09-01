@@ -15,21 +15,22 @@ package abaco_digital.freedom360;
 // guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
 //TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
 //notTODO: borrar videos con longclic.
-//TODO: actualizar la galeria al borrar un video
+//notTODO: actualizar la galeria al borrar un video
 // ojo con las url al descargar. control. si no tiene protocolo anyadir http y a correr. A correr hecho. http hecho
-//TODO: gestionar errores con dialog y mensajes al usuario. En ello. Falta el de tamano video video
+//TODO: gestionar errores con dialog y mensajes al usuario. En ello. Falta el de tamano video
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
-//TODO: doble tapback para salir de la aplicacion? Uno vale tambien
+//notTODO: doble tapback para salir de la aplicacion? Uno vale tambien
 // keyboard shows in tablet but not in smartphone (dialog editText). Arreglado a lo bestia
 //notTODO: asegurarse de que la pantalla no se bloquea al reproducir un video
 // ahora en el movil no se ve el fondo del horizontallistview. Arreglado. Faltaban las carpetas drawable dpi
 // eliminar texto del dialog cuando el usuario pulsa sobre el. HECHO
 // coger la imagen para los videos que no son predefinidos. Hecho
-//TODO: en la tablet no se cargan las imagenes de los videos descargados ni se puede acceder a los videos descargados
+//notTODO: en la tablet no se cargan las imagenes de los videos descargados ni se puede acceder a los videos descargados
 //TODO: imagen de videos descargados es demasiado ancha
-//TODO: eventos en el drag no funcionan
-//TODO: probar que en la cadena de conexion esta el http
-//TODO: no se pueden borrar los videos (?)
+//notTODO: eventos en el drag no funcionan
+//notTODO: probar que en la cadena de conexion esta el http
+//notTODO: no se pueden borrar los videos (?)
+//notTODO: esconder el teclado al salir de la descarga
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -182,7 +183,7 @@ public class GaleriaPrincipal extends Activity {
                     enlace.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(enlace.getText().toString().equals("insert video URL")){
+                            if(enlace.getText().toString().contains("insert video URL")){
                                 enlace.setText("");
                             }
                             Log.e("TEXTO",enlace.getText().toString());
@@ -206,22 +207,31 @@ public class GaleriaPrincipal extends Activity {
                                     try {
                                         //method for download found in http://www.insdout.com/
                                         // snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
+                                        Log.e("PATH","path "+path);
+                                        if(!path.startsWith("http://")){
+                                            path = "http://"+path;
+                                        }
+                                        Log.e("PATH","path "+path);
                                         URL url = new URL(path);
-                                        if(url.getProtocol()==null){
+                                        /*if(url.getProtocol()==null){
                                             path="http://"+path;
                                             url = new URL(path);
-                                        }
+                                        }*/
                                         videoDownloader = new AsyncVideoDownloader();
                                         videoDownloader.execute(url);
 //                                        lista=fillData(getApplicationContext());
 //                                        videoAdapter.notifyDataSetChanged();
                                     } catch (MalformedURLException ex) {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
-                                        builder.setTitle("Error. Bad URL. Make sure you use a valid format (ie: \"http://url.com\")")
+                                        builder.setTitle("Error. Bad URL. Make sure you use a valid format (ie: \"http://url.com\", or \"url.com\")")
                                                 .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
                                                         dialog.cancel();
+                                                        InputMethodManager imm = (InputMethodManager) GaleriaPrincipal.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                                        if(imm.isActive()){
+                                                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                                                        }
                                                     }
                                                 });
                                         AlertDialog d = builder.create();
@@ -764,7 +774,7 @@ public class GaleriaPrincipal extends Activity {
             progreso.cancel();
             Log.e("GALLERY","setpath to the video");
             AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
-            builder.setTitle("Your video has been downloaded")
+            builder.setTitle("Your video has been downloaded. The video frame sample will appear when gallery is refreshed.")
                     .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
