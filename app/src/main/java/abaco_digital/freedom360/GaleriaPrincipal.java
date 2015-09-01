@@ -26,11 +26,15 @@ package abaco_digital.freedom360;
 // eliminar texto del dialog cuando el usuario pulsa sobre el. HECHO
 // coger la imagen para los videos que no son predefinidos. Hecho
 //notTODO: en la tablet no se cargan las imagenes de los videos descargados ni se puede acceder a los videos descargados
-//TODO: imagen de videos descargados es demasiado ancha
+//notTODO: imagen de videos descargados es demasiado ancha
 //notTODO: eventos en el drag no funcionan
 //notTODO: probar que en la cadena de conexion esta el http
 //notTODO: no se pueden borrar los videos (?)
 //notTODO: esconder el teclado al salir de la descarga
+//TODO: dejar más espacio entre el borde del videoControlView y los elementos(botones y tiempo), alinear tiempo y botones
+//TODO: borrar imagenes al borrar el video
+//todo: copiar clicklistener de mas al onlongclicklistener
+//TODO: eliminar codigo muerto, aligerar la aplicacion
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;

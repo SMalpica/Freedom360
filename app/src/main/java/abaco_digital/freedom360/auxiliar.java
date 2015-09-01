@@ -140,6 +140,7 @@ public class auxiliar {
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);*/
             int width =204;
             int height = 300;
+
             try {
                 Log.e("FRAME_SAMPLE","aqui no llego");
                 //rescale the frame sample
@@ -163,8 +164,12 @@ public class auxiliar {
 //                File file = new File (path);
                     Log.d("CREAR_IMAGEN3","file creado");
                     FileOutputStream out = new FileOutputStream(files);
-                    Log.d("CREAR_IMAGEN3","outputStream creado");
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
+                    Log.d("CREAR_IMAGEN3", "outputStream creado");
+                    Bitmap nuevo2 = Bitmap.createScaledBitmap(
+                            bmp, 275*2, height*2, false);
+                    Bitmap nuevo = Bitmap.createBitmap(nuevo2,0,0,275,height);
+                    nuevo.compress(Bitmap.CompressFormat.JPEG, 100, out);
+//                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
                     Log.d("CREAR_IMAGEN3", "bmp compressed");
                     out.flush();
                     out.close(); //close the stream
