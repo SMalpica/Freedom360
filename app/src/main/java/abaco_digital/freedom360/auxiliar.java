@@ -168,7 +168,7 @@ public class auxiliar {
                     Bitmap nuevo2 = Bitmap.createScaledBitmap(
                             bmp, 275*2, height*2, false);
                     Bitmap nuevo = Bitmap.createBitmap(nuevo2,0,0,275,height);
-                    nuevo.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
 //                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
                     Log.d("CREAR_IMAGEN3", "bmp compressed");
                     out.flush();

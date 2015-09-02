@@ -26,7 +26,8 @@ package abaco_digital.freedom360;
 // eliminar texto del dialog cuando el usuario pulsa sobre el. HECHO
 // coger la imagen para los videos que no son predefinidos. Hecho
 //notTODO: en la tablet no se cargan las imagenes de los videos descargados ni se puede acceder a los videos descargados
-//notTODO: imagen de videos descargados es demasiado ancha
+//notTODO: imagen de videos descargados es demasiado ancha //notTODO: ahora en el movil se ve demasiado estrecho
+//notTODO: funcionar de forma distinta dependiendo del tamaño para arreglarlo
 //notTODO: eventos en el drag no funcionan
 //notTODO: probar que en la cadena de conexion esta el http
 //notTODO: no se pueden borrar los videos (?)
@@ -35,6 +36,8 @@ package abaco_digital.freedom360;
 //TODO: borrar imagenes al borrar el video
 //todo: copiar clicklistener de mas al onlongclicklistener
 //TODO: eliminar codigo muerto, aligerar la aplicacion
+//TODO: utilizar SDcard si se encuentra disponible
+
 
 import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
@@ -96,6 +99,7 @@ public class GaleriaPrincipal extends Activity {
     private AsyncVideoDownloader videoDownloader;
     private ArrayList<Video> lista;
     private HorizontalListView lv;
+    public boolean esTablet;
 
     @Override
     @TargetApi(21)
@@ -114,7 +118,8 @@ public class GaleriaPrincipal extends Activity {
 
         //use different layouts depending on the screen size
         FrameLayout inferior;
-        if(auxiliar.isTablet(getApplicationContext())){                         //tablet layout
+        esTablet=auxiliar.isTablet(getApplicationContext());
+        if(esTablet){                         //tablet layout
             setContentView(R.layout.activity_galeria_principal);
             //Measure of the screen
             Display display = getWindowManager().getDefaultDisplay();
@@ -677,6 +682,13 @@ public class GaleriaPrincipal extends Activity {
             }
 //            item.setScaleType(ImageView.ScaleType.FIT_CENTER);
 //            item.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            if(esTablet){
+                Log.e("ADJUST","entramos");
+                item.setAdjustViewBounds(true);
+                item.setMaxWidth(275);
+                item.setMinimumWidth(275);
+            }
+            if(!video.getImagen().equalsIgnoreCase("mas")) item.setScaleType(ImageView.ScaleType.CENTER_CROP);
             return convertView;
         }
     }
