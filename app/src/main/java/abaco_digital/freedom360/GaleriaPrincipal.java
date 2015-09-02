@@ -13,11 +13,11 @@ package abaco_digital.freedom360;
 //imagenes galeria se recortan en tablet. arreglarlo. HECHO
 // las imagenes not available no se ven en todos los moviles. Revisar HEDHO
 // guardar los dos primeros videos en res/raw y crear capturas en res/drawable. Hecho
-//TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara
+//TODO: gestionar en la descarga del video si hay espacio con getFreeSpace() y getTotalSpace() o capturar IOException si no se cuanto ocupara con dialog
 //notTODO: borrar videos con longclic.
 //notTODO: actualizar la galeria al borrar un video
 // ojo con las url al descargar. control. si no tiene protocolo anyadir http y a correr. A correr hecho. http hecho
-//TODO: gestionar errores con dialog y mensajes al usuario. En ello. Falta el de tamano video
+//notTODO: gestionar errores con dialog y mensajes al usuario. En ello. Falta el de tamano video
 //TODO: efecto deslizante en el scroll mas alla del ultimo elemento en cada lado. Buscar como o si es posible
 //notTODO: doble tapback para salir de la aplicacion? Uno vale tambien
 // keyboard shows in tablet but not in smartphone (dialog editText). Arreglado a lo bestia
@@ -33,7 +33,7 @@ package abaco_digital.freedom360;
 //notTODO: no se pueden borrar los videos (?)
 //notTODO: esconder el teclado al salir de la descarga
 //notTODO: dejar más espacio entre el borde del videoControlView y los elementos(botones y tiempo), alinear tiempo y botones
-//TODO: borrar imagenes(del almacenamiento del dispositivo) al borrar el video
+//notTODO: borrar imagenes(del almacenamiento del dispositivo) al borrar el video
 //todo: copiar clicklistener de mas al onlongclicklistener
 //TODO: eliminar codigo muerto, aligerar la aplicacion
 //TODO: utilizar SDcard si se encuentra disponible
@@ -258,11 +258,12 @@ public class GaleriaPrincipal extends Activity {
             }
         });
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            Video video;
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final int posicion = position;
                 Log.e("MOTION","child long clicked");
-                Video video = lista.get(position);
+                video = lista.get(position);
                 //item mas opens a dialog for downloads if long clicked
                 if(video.getImagen().equalsIgnoreCase("mas")){
 
@@ -280,6 +281,8 @@ public class GaleriaPrincipal extends Activity {
 //                                            lv.removeViewAt(posicion);
                                             lista.remove(posicion);
                                             archivo.delete();
+                                            File imagen = auxiliar.obtenerArchivoImagen(video.getImagen());
+                                            imagen.delete();
                                             videoAdapter.notifyDataSetChanged();
                                             dialog.cancel();
                                         }
