@@ -40,7 +40,6 @@ package abaco_digital.freedom360;
 //notTODO: no permitir descargas vacías
 
 
-import abaco_digital.freedom360.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -92,7 +91,7 @@ import java.util.List;
 /**
  * horizontal full-screen
  *
- * @see SystemUiHider
+ *
  */
 public class GaleriaPrincipal extends Activity {
 
@@ -170,10 +169,14 @@ public class GaleriaPrincipal extends Activity {
                 Log.e("MOTION", "child clicked");
                 Video video = lista.get(position);
                 if (!video.getImagen().equalsIgnoreCase("mas")) {
-                    Intent intent = new Intent(GaleriaPrincipal.this, MainActivity.class);
+//                    Intent intent = new Intent(GaleriaPrincipal.this, MainActivity.class);
+                    Intent intent = new Intent(GaleriaPrincipal.this, TouchActivity.class);
                     //send the URI
                     intent.putExtra("TITULO", video.getImagen());
                     intent.putExtra("PATH", video.getPath());
+                    intent.putExtra("TIME",0);
+                    intent.putExtra("STATUS",true);
+                    intent.putExtra("MODE",0);
 //                        intent.putExtra("URI",video.getUri().toString());
                     Log.e("ON_CLICK", "video clicado, abrir nueva actividad");
                     startActivity(intent);

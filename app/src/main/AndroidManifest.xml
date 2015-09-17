@@ -21,12 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
+        <activity android:name=".TouchActivity"
             android:screenOrientation="landscape"
             android:parentActivityName=".GaleriaPrincipal">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GaleriaPrincipal"/>
+        </activity>
+        <activity android:name=".GyroActivity"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".GaleriaPrincipal">
         </activity>
     </application>
 
