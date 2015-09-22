@@ -34,6 +34,7 @@
     import android.database.DataSetObserver;
     import android.graphics.Rect;
     import android.util.AttributeSet;
+    import android.util.DisplayMetrics;
     import android.view.GestureDetector;
     import android.view.GestureDetector.OnGestureListener;
     import android.view.MotionEvent;
@@ -59,11 +60,17 @@
         private OnItemClickListener mOnItemClicked;
         private OnItemLongClickListener mOnItemLongClicked;
         private boolean mDataChanged = false;
+        private static final int MAX_X_OVERSCROLL_DISTANCE = 200;
+        private int mMaxXOverscrollDistance;
 
 
         public HorizontalListView(Context context, AttributeSet attrs) {
             super(context, attrs);
             initView();
+            final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            final float density = metrics.density;
+
+            mMaxXOverscrollDistance = (int) (density * MAX_X_OVERSCROLL_DISTANCE);
         }
 
         private synchronized void initView() {
@@ -158,7 +165,7 @@
         @Override
         protected synchronized void onLayout(boolean changed, int left, int top, int right, int bottom) {
             super.onLayout(changed, left, top, right, bottom);
-
+/*TODO: see http://jasonfry.co.uk/blog/android-overscroll-revisited/*/
             if(mAdapter == null){
                 return;
             }
@@ -176,13 +183,15 @@
                 mNextX = scrollx;
             }
 
-            if(mNextX <= 0){
-                mNextX = 0;
-                mScroller.forceFinished(true);
+            if(mNextX <= -mMaxXOverscrollDistance){
+//                mNextX = 0;
+//                mNextX=-mMaxXOverscrollDistance;
+//                mScroller.forceFinished(true);
             }
-            if(mNextX >= mMaxX) {
-                mNextX = mMaxX;
-                mScroller.forceFinished(true);
+            if(mNextX >= mMaxX+mMaxXOverscrollDistance) {
+//                mNextX = mMaxX;
+//                mNextX=mMaxX+mMaxXOverscrollDistance;
+//                mScroller.forceFinished(true);
             }
 
             int dx = mCurrentX - mNextX;
@@ -381,6 +390,14 @@
             }
         };
 
+
+        @Override
+        protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX, int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent)
+        {
+            //This is where the magic happens, we have replaced the incoming maxOverScrollY with our own custom variable mMaxYOverscrollDistance;
+//            return super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX, scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
+            return super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX, scrollRangeY, 2000, 2000, isTouchEvent);
+        }
 
 
     }

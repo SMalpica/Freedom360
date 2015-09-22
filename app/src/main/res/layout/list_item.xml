@@ -5,8 +5,8 @@
     android:padding="3dp" android:id="@+id/padre">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:padding="2sp"
         android:id="@+id/miniatura"

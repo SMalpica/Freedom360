@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GaleriaPrincipal"
-    android:background="#ffaeaeae">
+    android:background="#ffaeaeae"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -95,13 +96,27 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/espacio"
                 android:scaleType="centerCrop"/>
-            <abaco_digital.freedom360.HorizontalListView
+            <!--abaco_digital.freedom360.HorizontalListView
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/galeria"
                 android:gravity="center_vertical"
-            />
+                android:overScrollMode="always"
+            -->
+            <com.github.rongi.rotate_layout.layout.RotateLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/galeria"
+                android:gravity="center_vertical"
+                android:overScrollMode="always"
+                app:layout_angle="90"
+                />
+            </com.github.rongi.rotate_layout.layout.RotateLayout>
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>

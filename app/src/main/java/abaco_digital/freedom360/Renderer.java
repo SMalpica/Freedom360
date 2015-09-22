@@ -21,15 +21,15 @@ import java.io.IOException;
 //NotTODO: crear una instancia del android video player normal y ponerla como imagen
 //notTODO: Anyadir controles del reproductor
 //notTODO: comprobar funcionamiento video. EL vídeo va bien.
-//TODO: arreglar inclinacion del video
+//notTODO: arreglar inclinacion del video
 //notTODO: uses-permission android:name="android.permission.WAKE_LOCK" evitar q pantalla se bloquee
 //notTODO: cambiar de proyeccion fisheye a rectilinea. Aproximacion conseguida
 //notTODO: ajustar size iconos playerControl. Cardboard demasiado grande, play small.
 //notTODO: cambiar apariencia del seekBar. El default es feo con ganas.
 //notTODO: actualizar seekBar cada segundo. Hecho
-//TODO: modo giroscopo. No se mueve como deberia. Tal vez porque no estamos en la orientacion default en movil. Arreglar.
-//TODO: modo cardboard.
-//TODO: linkear con app principal. funcionalidad del backButton.
+//notTODO: modo giroscopo. No se mueve como deberia. Tal vez porque no estamos en la orientacion default en movil. Arreglar.
+//notTODO: modo cardboard.
+//notTODO: linkear con app principal. funcionalidad del backButton.
 //TODO: add animaciones o efectos en los elementos con los que el usuario puede interactuar.
 //notTODO: hacer que el control del video se desvanezca con inactividad / desaparezca con click.
 //notTODO: arreglar problema al bloquar y desbloquear la pantalla sin parar de reproducir. Pasa en tablet, en movil no.
@@ -38,8 +38,8 @@ import java.io.IOException;
 //notTODO: poner en los textview del control del video el tiempo total y el actual.
 //notTODO: seekbar deja de funcionar al bloquear y desbloquear el movil
 //TODO: . The Main Activity should deactivate the sensors whenever it is not running so that power can be saved
-//TODO: probar con el modo giroscopio custom que encontramos por internet o siguiendo el paper (lo tienes en el correo)
-//TODO: utilizar ecuaciones para movimiento normal
+//notTODO: probar con el modo giroscopio custom que encontramos por internet o siguiendo el paper (lo tienes en el correo)
+//notTODO: utilizar ecuaciones para movimiento normal
 
 /**
  * Author: Sandra Malpica Mallo

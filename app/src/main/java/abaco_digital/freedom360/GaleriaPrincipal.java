@@ -38,7 +38,7 @@ package abaco_digital.freedom360;
 //TODO: eliminar codigo muerto, aligerar la aplicacion
 //TODO: utilizar SDcard si se encuentra disponible
 //notTODO: no permitir descargas vacías
-
+//TODO: dar opcion de cancelar en las descargas. No necesaria
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -73,6 +73,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.Display;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -98,7 +99,7 @@ public class GaleriaPrincipal extends Activity {
     private VideoAdapter videoAdapter;
     private AsyncVideoDownloader videoDownloader;
     private ArrayList<Video> lista;
-    private HorizontalListView lv;
+    private ListView lv;
     public boolean esTablet;
 
     @Override
@@ -131,7 +132,8 @@ public class GaleriaPrincipal extends Activity {
             //half the space for the gallery
             superior.getLayoutParams().height=outMetrics.heightPixels/6;
 //            inferior.getLayoutParams().height=outMetrics.heightPixels*3/6;
-            HorizontalListView galeria = (HorizontalListView)findViewById(R.id.galeria);
+           ListView galeria = (ListView)findViewById(R.id.galeria);
+            galeria.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
             galeria.setMinimumHeight(inferior.getHeight());
             //force text and image have the same height in xml
             TextView texto = (TextView)findViewById(R.id.editText);
@@ -148,11 +150,18 @@ public class GaleriaPrincipal extends Activity {
             TextView texto = (TextView)findViewById(R.id.textView);
             texto.setTypeface(face);
             //make the scroll background crop instead of stretching in xml
+            ListView galeria = (ListView)findViewById(R.id.galeria);
+            galeria.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
         }
 
         //fill the gallery with the available videos
         lista = fillData(getApplicationContext());
-        lv = (HorizontalListView)findViewById(R.id.galeria);
+        lv = (ListView)findViewById(R.id.galeria);
+//        lv.setDivider(null);
+        lv.setFastScrollAlwaysVisible(false);
+        lv.setFastScrollEnabled(false);
+        lv.setPadding(0,0,0,0);
+        lv.setVerticalScrollBarEnabled(false);
 //        lv.setClickable(false);
         /*lv.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -412,6 +421,8 @@ public class GaleriaPrincipal extends Activity {
             convertView = LayoutInflater.from(contexto).inflate(R.layout.list_item, parent, false);
             // Lookup view for data population
             item = (ImageView) convertView.findViewById(R.id.miniatura);
+//            item.setRotation(90);
+
             // Populate the data into the template view using the data object
             Log.e("VIDEO_ADAPTER_GETVIEW", video.getImagen());
             //parse the video name to get the image name
@@ -450,6 +461,7 @@ public class GaleriaPrincipal extends Activity {
                 item.setMinimumWidth(200);
             }
             if(!video.getImagen().equalsIgnoreCase("mas")) item.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            item.setRotation(90);
             return convertView;
         }
     }
@@ -465,7 +477,6 @@ public class GaleriaPrincipal extends Activity {
      * Comments: async task used to download the videos of the app.
      */
     public class AsyncVideoDownloader extends AsyncTask<URL,Integer,String>{
-        //TODO: dar opcion de cancelar en las descargas. No necesaria
         private ProgressDialog progreso;
         private boolean error;
         @Override

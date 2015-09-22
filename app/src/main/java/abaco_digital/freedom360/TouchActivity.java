@@ -24,6 +24,7 @@ import android.widget.TextView;
 import org.rajawali3d.surface.RajawaliSurfaceView;
 import java.util.concurrent.Semaphore;
 
+//notTODO: enviar la informacion necesaria del video (path y titulo)
 public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeListener,View.OnClickListener{
     Renderer renderer;              //openGL renderer
     TouchRenderer trenderer;
@@ -162,7 +163,6 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                         /*finish();
                         lock.release();*/
                         Log.e("GYRO","from touchActivity to gyro mode");
-                        //TODO: enviar la informacion necesaria del video (path y titulo)
                         break;
                     /*case 2:         //CARDBOARD MODE
                         modeButton.setImageLevel(2);

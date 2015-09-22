@@ -152,7 +152,7 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
             @Override
             public void onClick(View v) {
                 System.runFinalization();
-                System.exit(0); //cerrar el sistema. TODO: volver a Activity principal
+                System.exit(0); //cerrar el sistema. notTODO: volver a Activity principal
             }
         });
 

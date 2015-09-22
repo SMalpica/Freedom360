@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#010101"
+    android:alpha="0.5"
+    android:padding="3dp"
+    android:layout_margin="3dp"
+    android:elevation="10dp">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/touch"
+        android:id="@+id/floatingTouch"
+        android:background="@android:color/transparent"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/move"
+        android:layout_toRightOf="@id/floatingTouch"
+        android:id="@+id/floatingMove"
+        android:background="@android:color/transparent"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/cardboard"
+        android:layout_toRightOf="@id/floatingMove"
+        android:background="@android:color/transparent"/>
+</RelativeLayout>

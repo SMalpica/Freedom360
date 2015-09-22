@@ -56,11 +56,11 @@ public class CRenderer extends RajawaliVRRenderer{
                 }else{
                     id=context.getResources().getIdentifier("pyrex","raw",context.getPackageName());
                 }
-//                mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + id));
+                mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + id));
             }else{                  //case: downloaded video
                 mMediaPlayer.setDataSource(Uri.fromFile(new File(path)).getPath());
             }
-            mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.pyrex));
+//            mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.pyrex));
         }catch(IOException ex){
             Log.e("ERROR", "couldn attach data source to the media player");
         }

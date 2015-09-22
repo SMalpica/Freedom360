@@ -18,14 +18,16 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import java.util.concurrent.Semaphore;
 //TODO: add scaleGesture Listener for zooming
-//TODO: pasar el nombre del video y el path(?)
-//TODO: cambiar el comportamiento del modo cardboard. Hacer que salte el diálogo la primera vez que se le da al play?
-//TODO: en vez de cambio de modo secuencial, permitir elegir a qué modo se cambia al pulsar el botón
+//notTODO: pasar el nombre del video y el path(?)
+//notTODO: cambiar el comportamiento del modo cardboard. Hacer que salte el diálogo la primera vez que se le da al play?
+//TODO: en vez de cambio de modo secuencial, permitir elegir a qué modo se cambia al pulsar el botón(FloatingActionButton)
 //TODO: asegurarse de que se puede bloquear y desbloquear la pantalla sin problemas durante la reproducción
+//TODO: ojo, al cambiar a cardboard, si clickeas fuera durante la cuenta atras del dialogo se fastidia la operacion(comprobar)
 /**
  * Created by Fitur on 11/09/2015.
  */
@@ -33,6 +35,7 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
     public static View principal;   //surface, for external access
     public static View control;     //view, control video view, for external access
     public LinearLayout view;       //view, control video view
+    private RelativeLayout floatingView;
     private TextView tiempoActual;  //textview to show the actual reproduced video time
     private TextView tiempoTotal;   //textview to show the total video time
     private Thread controller;      //updates progress in seekbar and textviews
@@ -47,6 +50,7 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
     private AlertDialog dialog;
     private String titulo;
     private String path;
+//    private FloatingActionButton f;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -75,6 +79,7 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
         LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
         ViewGroup viewGroup = (ViewGroup)getWindow().getDecorView().findViewById(android.R.id.content);
         view = (LinearLayout)layoutInflater.inflate(R.layout.player_control, null);
+        floatingView = (RelativeLayout)layoutInflater.inflate(R.layout.floating_modes,null);
         view.setVerticalGravity(Gravity.BOTTOM);
         tiempoActual = (TextView)view.findViewById(R.id.tiempoTranscurrido);
         tiempoTotal = (TextView)view.findViewById(R.id.tiempoTotal);
@@ -112,6 +117,8 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
         modeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                floatingView.setVisibility(View.VISIBLE);
+
                 //the existence of the needed sensors has already been checked in TouchActivity
                 GyroActivity.this.mode = (GyroActivity.this.mode + 1) % 3;
                 switch (GyroActivity.this.mode) {
@@ -148,11 +155,58 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
                     case 1:             //GYRO MODE
                         modeButton.setImageLevel(1);
                         getSurfaceView().setVRModeEnabled(false);
+                        timer.cancel();
+                        timer.start();
                         break;
                     case 2:             //CARDBOARD MODE
                         modeButton.setImageLevel(2);
                         getSurfaceView().setVRModeEnabled(true);
-                        lanzarGiro();
+//                        lanzarGiro();
+                        mRenderer.getMediaPlayer().pause();
+                        timer.cancel();
+                        playButton.setImageLevel(1);
+                        playButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(GyroActivity.this);
+                                builder.setTitle("Prepare Cardboard")
+                                        .setMessage("Place your device inside the cardboard. ")
+                                        .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog2, int which) {
+                                                timer.start();
+                                                AlertDialog.Builder b = new AlertDialog.Builder(GyroActivity.this);
+                                                b.setMessage("The video will start in 10 seconds");
+                                                dialog = b.create();
+                                                dialog.show();
+                                            }
+                                        });
+                                dialog = builder.create();
+                                dialog.setCanceledOnTouchOutside(false);
+                                timer=new CountDownTimer(10000,1000){
+                                    public void onFinish(){
+                                        mRenderer.getMediaPlayer().seekTo(0);
+                                        mRenderer.getMediaPlayer().start();
+                                        dialog.cancel();
+                                        playButton.setImageLevel(0);}
+                                    public void onTick(long l){dialog.setMessage("The video will start in "+(int)l/1000+" seconds");}
+                                };
+                                dialog.show();
+                                GyroActivity.this.view.setVisibility(View.INVISIBLE);
+                                playButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if(mRenderer.getMediaPlayer().isPlaying()){
+                                            mRenderer.getMediaPlayer().pause();
+                                            playButton.setImageLevel(1);//change button image
+                                        }else{
+                                            mRenderer.getMediaPlayer().start();
+                                            playButton.setImageLevel(0);
+                                        }
+                                    }
+                                });
+                            }
+                        });
                         break;
                 }
             }

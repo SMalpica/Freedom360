@@ -21,7 +21,7 @@ import org.rajawali3d.math.Matrix4;
 import org.rajawali3d.math.Quaternion;
 import org.rajawali3d.math.vector.Vector2;
 import org.rajawali3d.math.vector.Vector3;
-//TODO: idea: quitar startOrientation quaternion?
+//notTODO: idea: quitar startOrientation quaternion?
 /**
  * Author: Sandra Malpica Mallo
  * Date: 27/07/2015.
