@@ -104,7 +104,7 @@
                 android:gravity="center_vertical"
                 android:overScrollMode="always"
             -->
-            <com.github.rongi.rotate_layout.layout.RotateLayout
+            <!--com.github.rongi.rotate_layout.layout.RotateLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
             <ListView
@@ -116,7 +116,13 @@
                 android:overScrollMode="always"
                 app:layout_angle="90"
                 />
-            </com.github.rongi.rotate_layout.layout.RotateLayout>
+            </com.github.rongi.rotate_layout.layout.RotateLayout-->
+            <com.meetme.android.horizontallistview.HorizontalListView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:widget="http://schemas.android.com/apk/res-auto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/galeria"/>
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>

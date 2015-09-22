@@ -158,10 +158,9 @@ public class GaleriaPrincipal extends Activity {
         lista = fillData(getApplicationContext());
         lv = (ListView)findViewById(R.id.galeria);
 //        lv.setDivider(null);
-        lv.setFastScrollAlwaysVisible(false);
-        lv.setFastScrollEnabled(false);
         lv.setPadding(0,0,0,0);
         lv.setVerticalScrollBarEnabled(false);
+        lv.setDivider(null);
 //        lv.setClickable(false);
         /*lv.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -461,7 +460,9 @@ public class GaleriaPrincipal extends Activity {
                 item.setMinimumWidth(200);
             }
             if(!video.getImagen().equalsIgnoreCase("mas")) item.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            item.setRotation(90);
+            else item.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//            item.setRotation(90);
+            convertView.setRotation(90);
             return convertView;
         }
     }
