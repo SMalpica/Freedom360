@@ -39,6 +39,7 @@ package abaco_digital.freedom360;
 //TODO: utilizar SDcard si se encuentra disponible
 //notTODO: no permitir descargas vacías
 //TODO: dar opcion de cancelar en las descargas. No necesaria
+//TODO: hacer que el icono de cambio de modo sea mas grande
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -461,8 +462,9 @@ public class GaleriaPrincipal extends Activity {
             }
             if(!video.getImagen().equalsIgnoreCase("mas")) item.setScaleType(ImageView.ScaleType.CENTER_CROP);
             else item.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//            item.setTranslationX(100.0f*posicion);
 //            item.setRotation(90);
-            convertView.setRotation(90);
+//            convertView.setRotation(90);
             return convertView;
         }
     }
