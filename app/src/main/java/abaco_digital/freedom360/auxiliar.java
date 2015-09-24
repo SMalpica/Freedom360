@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -138,9 +139,15 @@ public class auxiliar {
             /*ImageView view = (ImageView) findViewById(R.id.imageView);
             view.setImageBitmap(bmp);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);*/
-            int width =204;
-            int height = 300;
 
+            DisplayMetrics dm = new DisplayMetrics();
+            Display display = principal.getWindowManager().getDefaultDisplay();
+            display.getMetrics(dm);
+            int height = (int)dm.density*dm.heightPixels*5/6;
+            int width = height*2/3;
+                    /*Display display = getWindowManager().getDefaultDisplay();
+            DisplayMetrics outMetrics = new DisplayMetrics();
+            display.getMetrics(outMetrics);*/
             try {
                 Log.e("FRAME_SAMPLE","aqui no llego");
                 //rescale the frame sample
@@ -162,13 +169,16 @@ public class auxiliar {
                     File files = obtenerArchivoImagen(video.getImagen());
                     Log.e("FRAME_SAMPLE",files.getPath());
 //                File file = new File (path);
-                    Log.d("CREAR_IMAGEN3","file creado");
+                    Log.d("CREAR_IMAGEN3", "file creado");
                     FileOutputStream out = new FileOutputStream(files);
                     Log.d("CREAR_IMAGEN3", "outputStream creado");
-                    Bitmap nuevo2 = Bitmap.createScaledBitmap(
-                            bmp, 275*2, height*2, false);
-                    Bitmap nuevo = Bitmap.createBitmap(nuevo2,0,0,275,height);
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+//                    Bitmap nuevo2 = Bitmap.createScaledBitmap(
+//                            bmp, 275*2, height*2, false);
+                    Bitmap mitad = Bitmap.createBitmap(bmp,(int)(originalWidth/2 - originalHeight/2),0,(int)originalHeight,(int)originalHeight);
+                    Bitmap escalado = Bitmap.createScaledBitmap(mitad,width,height,false);
+                    escalado.compress(Bitmap.CompressFormat.JPEG, 100, out);
+//                    Bitmap nuevo = Bitmap.createBitmap(nuevo2,0,0,275,height);
+//                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
 //                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
                     Log.d("CREAR_IMAGEN3", "bmp compressed");
                     out.flush();

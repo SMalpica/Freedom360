@@ -40,6 +40,7 @@ package abaco_digital.freedom360;
 //notTODO: no permitir descargas vacías
 //TODO: dar opcion de cancelar en las descargas. No necesaria
 //TODO: hacer que el icono de cambio de modo sea mas grande
+//TODO: eliminar fotos intermedias que se generan en /pictures
 
 import android.annotation.TargetApi;
 import android.app.Activity;

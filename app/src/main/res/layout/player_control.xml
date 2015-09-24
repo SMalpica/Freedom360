@@ -64,7 +64,7 @@
                 android:contentDescription="mode player button"
                 android:src="@drawable/ic_modes"
                 android:layout_alignParentRight="true"
-                android:background="@android:color/transparent" />
+                android:background="?android:selectableItemBackground"/>
 
         </RelativeLayout>
 
