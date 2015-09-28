@@ -1,8 +1,5 @@
 package abaco_digital.freedom360;
 
-/**
- * Created by Fitur on 17/09/2015.
- */
 import android.app.ActionBar;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -16,6 +13,7 @@ import com.google.vrtoolkit.cardboard.CardboardView;
 
 
 /**
+ * Extracted from Rajawali project on github
  * @author dennis.ippel
  */
 public class RajawaliVRActivity extends CardboardActivity {

@@ -1,7 +1,13 @@
 package abaco_digital.freedom360;
-
 /**
- * Created by Fitur on 17/09/2015.
+ * Autor: Sandra Malpica Mallo
+ *
+ * Fecha: 11/09/2015
+ *
+ * Clase: TouchActivity.java
+ *
+ * Comments: one of the app's player activities. It manages touch mode. It also sets
+ * up the video control view.
  */
 import android.app.ActionBar;
 import android.app.Activity;
@@ -26,8 +32,7 @@ import java.util.concurrent.Semaphore;
 
 //notTODO: enviar la informacion necesaria del video (path y titulo)
 public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeListener,View.OnClickListener{
-    Renderer renderer;              //openGL renderer
-    TouchRenderer trenderer;
+    TouchRenderer trenderer;        //openGL renderer
     RajawaliSurfaceView surface;    //openGL surface
     public static View principal;   //surface, for external access
     public static View control;     //view, control video view, for external access
@@ -39,11 +44,11 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     public Semaphore lock;          //stops controller thread when app is paused
     private int modo=0;             //video playback mode: touch(0), gyro(1), cardboard(2)
     private int tTotal,tActual;     //current and total video time
-    private int timeSent;
+    private int timeSent;           //the time where the video has to start (sent from other player activity)
     private boolean tieneGiro = false;//shows if the device has a gyroscope sensor
-    private boolean isPlaying;
-    private String titulo;
-    private String path;
+    private boolean isPlaying;      //true if the video is not paused
+    private String titulo;          //video's title
+    private String path;            //video's path
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,19 +67,16 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         isPlaying=intent.getBooleanExtra("STATUS", true);
         titulo = intent.getStringExtra("TITULO");
         path = intent.getStringExtra("PATH");
-        Log.e("INFO_CHANGE","tiempo recibido en touchActivity "+timeSent);
+        Log.d("INFO_CHANGE","tiempo recibido en touchActivity "+timeSent);
         surface = new RajawaliSurfaceView(this);
         principal = surface;
         //set the renderer
-//        renderer = new Renderer(this,timeSent);
         trenderer = new TouchRenderer(this,timeSent,path,titulo);
 
         // Add mSurface to your root view
         addContentView(surface, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT));
-//        surface.setSurfaceRenderer(renderer);
         surface.setSurfaceRenderer(trenderer);
         surface.setFrameRate(60);
-//        setRenderer(renderer);
         //keep the screen on
         surface.setKeepScreenOn(true);
 
@@ -107,13 +109,6 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*if(renderer.getMediaPlayer().isPlaying()){
-                    renderer.getMediaPlayer().pause();
-                    playButton.setImageLevel(1);//change button image
-                }else{
-                    renderer.getMediaPlayer().start();
-                    playButton.setImageLevel(0);
-                }*/
                 if(trenderer.getMediaPlayer().isPlaying()){
                     trenderer.getMediaPlayer().pause();
                     playButton.setImageLevel(1);//change button image
@@ -140,34 +135,14 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                     case 1:         //GYROSCOPE MODE
                         modeButton.setImageLevel(1);
                         Intent intent = new Intent(TouchActivity.this,GyroActivity.class);
-//                        intent.putExtra("MODE",modo);
-                        /*Log.e("INTENT INFO", "timepo " + renderer.getMediaPlayer().getCurrentPosition());
-                        intent.putExtra("TIME", renderer.getMediaPlayer().getCurrentPosition());
-                        intent.putExtra("STATUS", renderer.getMediaPlayer().isPlaying());*/
-                        Log.e("INTENT INFO", "timepo " + trenderer.getMediaPlayer().getCurrentPosition());
                         intent.putExtra("TIME", trenderer.getMediaPlayer().getCurrentPosition());
                         intent.putExtra("STATUS", trenderer.getMediaPlayer().isPlaying());
                         intent.putExtra("TITULO", titulo);
                         intent.putExtra("PATH", path);
-                        /*try{
-                            lock.acquire();
-                        } catch (InterruptedException ex){}*/
-//                        controller.stop();
-//                        startActivityForResult(intent, 19);
-                        Log.e("INFO_CHANGE","tiempo enviado a GyroActivity "+timeSent);
+                        Log.d("INFO_CHANGE","tiempo enviado a GyroActivity "+timeSent);
                         startActivity(intent);
                         finish();
-                        /*try{
-                            lock.acquire();
-                        } catch (InterruptedException ex){}*/
-                        /*finish();
-                        lock.release();*/
-                        Log.e("GYRO","from touchActivity to gyro mode");
                         break;
-                    /*case 2:         //CARDBOARD MODE
-                        modeButton.setImageLevel(2);
-                        Log.e("GYRO","from touchActivity to cardboard mode");
-                        break;*/
                 }
             }
         });
@@ -189,21 +164,17 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             @Override
             public void run() {
                 //run while the mediaPlayer exists
-//                while(primera || renderer.getMediaPlayer()!=null){
                 while(primera || trenderer.getMediaPlayer()!=null){
                     //acquire semaphore lock//used in onPause method
                     try{
                         lock.acquire();
                     }catch(InterruptedException ex){}
                     //wait until the mediaPlayer(prepared in the renderer) is not null
-//                    while (renderer.getMediaPlayer()==null){}
                     while (trenderer.getMediaPlayer()==null){}
                     //wait until the mediaPlayer is playing
-//                    while (!renderer.getMediaPlayer().isPlaying()){}
                     while (!trenderer.getMediaPlayer().isPlaying()){}
                     //set the total video time (only one executed once)
                     if(primera){
-//                        tTotal=renderer.getMediaPlayer().getDuration()/1000;
                         tTotal=trenderer.getMediaPlayer().getDuration()/1000;
                         primera = false;
                     }
@@ -211,12 +182,10 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                     try{
                         Thread.sleep(1000);
                         //get current mediaPlayer position
-//                        posicion = renderer.getMediaPlayer().getCurrentPosition();
                         posicion = trenderer.getMediaPlayer().getCurrentPosition();
                         tActual=posicion/1000;
                     }catch(InterruptedException ex){}
                     //sets the seekbar max to update progress with normal position
-//                    seekBar.setMax(renderer.getMediaPlayer().getDuration());
                     seekBar.setMax(trenderer.getMediaPlayer().getDuration());
                     //sends information to the UI thread
                     //UI elements can only be modified there
@@ -248,10 +217,9 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         PackageManager pm = getPackageManager();
         tieneGiro = pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
         tieneGiro = tieneGiro & pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER) & pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
-        Log.e("GYRO", "tiene acelerometro "+pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER));
-        Log.e("GYRO","tiene sensor rotacion "+pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS) );
-        Log.e("GYRO", "tiene giroscopo "+tieneGiro);
-        Log.e("PRUEBA","estoy al final del onCreate del activity");
+        Log.d("HAS_SENSOR", "tiene acelerometro "+pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER));
+        Log.d("HAS_SENSOR","tiene sensor rotacion "+pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS) );
+        Log.d("HAS_SENSOR", "tiene giroscopo "+tieneGiro);
     }
 
     /******************************************************************************/
@@ -262,21 +230,16 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     public void onActivityResult(int requestCode,int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode==19 && resultCode == 19){
-            Log.e("THREAD SAFE","hemos vuelto a la actividad principal");
             boolean isPlaying =  data.getBooleanExtra("STATUS",true);
             timeSent = data.getIntExtra("TIME",0);
-//            renderer.getMediaPlayer().seekTo(timeSent);
             trenderer.getMediaPlayer().seekTo(timeSent);
-//            if(isPlaying) renderer.getMediaPlayer().start();
             if(isPlaying) trenderer.getMediaPlayer().start();
-//            lock.release();
         }
     }
 
     //called when the user clicks on the screen
     @Override
     public void onClick(View v) {
-        Log.e("INTENT INFO","on click triggered");
         timer.cancel();
         if (TouchActivity.this.view.getVisibility() == View.INVISIBLE) {
             TouchActivity.this.view.setVisibility(View.VISIBLE);
@@ -292,12 +255,7 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     public void onPause() {
         super.onPause();
         surface.onPause();
-//        renderer.onPause();
         trenderer.onPause();
-        /*try{
-            lock.acquire();
-        }catch(InterruptedException ex){}*/
-        Log.e("SCREEN","onpause called");
     }
 
     //called when the activity is resumed
@@ -307,15 +265,12 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     public void onResume() {
         super.onResume();
         surface.onResume();
-//        renderer.onResume();
         if(principal!=null) trenderer.onResume();
         if(view.getVisibility()!=View.VISIBLE){
             view.setVisibility(View.VISIBLE);
             timer.cancel(); //restarts the timer
             timer.start();
         }
-//        lock.release();
-        Log.e("SCREEN", "onresume called");
     }
 
     /********************************************************************************/
@@ -327,7 +282,6 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         //if the user provoked the change
         if (fromUser) {
             //change mediaPLayer position
-//            renderer.getMediaPlayer().seekTo(progress);
             trenderer.getMediaPlayer().seekTo(progress);
             seekBar.setProgress(progress);  //change the seekbar progress
             progress=progress/1000;

@@ -47,7 +47,7 @@
                     android:id="@+id/textView"
                     android:background="#ff000000"
                     android:lines="1"
-                    android:textColor="#ff3cff80"
+                    android:textColor="#3cb65e"
                     android:textSize="28dp"
                     android:padding="10dp"
                 />
@@ -61,7 +61,7 @@
             android:text="@string/descripcion"
             android:minLines="5"
             android:maxLines="5"
-            android:textColor="#ff3cff80"
+            android:textColor="#3cb65e"
             android:autoLink="none"
             android:background="#ffffffff"
             android:singleLine="false"
@@ -96,33 +96,22 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/espacio"
                 android:scaleType="centerCrop"/>
-            <!--abaco_digital.freedom360.HorizontalListView
+            <com.github.rongi.rotate_layout.layout.RotateLayout
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_vertical"
-                android:id="@+id/galeria"
-                android:gravity="center_vertical"
-                android:overScrollMode="always"
-            -->
-            <!--com.github.rongi.rotate_layout.layout.RotateLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:id="@+id/galeria"
-                android:gravity="center_vertical"
-                android:overScrollMode="always"
-                app:layout_angle="90"
-                />
-            </com.github.rongi.rotate_layout.layout.RotateLayout-->
-            <com.meetme.android.horizontallistview.HorizontalListView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:widget="http://schemas.android.com/apk/res-auto"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/galeria"/>
+                android:layout_height="match_parent">
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:id="@+id/galeria"
+                    android:gravity="center"
+                    android:overScrollMode="always"
+                    app:layout_angle="90"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="0.0sp"
+
+                    />
+            </com.github.rongi.rotate_layout.layout.RotateLayout>
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>

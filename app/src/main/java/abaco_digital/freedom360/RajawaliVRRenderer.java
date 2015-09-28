@@ -1,8 +1,5 @@
 package abaco_digital.freedom360;
 
-/**
- * Created by Fitur on 17/09/2015.
- */
 import android.content.Context;
 import android.view.MotionEvent;
 
@@ -20,6 +17,7 @@ import org.rajawali3d.renderer.RajawaliRenderer;
 import javax.microedition.khronos.egl.EGLConfig;
 
 /**
+ * Extracted from Rajawali project on github
  * @author dennis.ippel
  */
 public class RajawaliVRRenderer extends RajawaliRenderer implements CardboardView.StereoRenderer {

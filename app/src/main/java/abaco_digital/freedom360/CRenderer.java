@@ -1,7 +1,13 @@
 package abaco_digital.freedom360;
-
 /**
- * Created by Fitur on 17/09/2015.
+ * Autor: Sandra Malpica Mallo
+ *
+ * Fecha: 11/09/2015
+ *
+ * Clase: CRenderer.java
+ *
+ * Comments: Cardboard renderer, used in gyroscope and cardboard mode. It sets the scene up.
+ * Sensor events are managed internally with Google Cardboard sdk.
  */
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -16,22 +22,27 @@ import org.rajawali3d.primitives.Sphere;
 
 import java.io.File;
 import java.io.IOException;
-/**
- * Created by Fitur on 11/09/2015.
- */
+
 public class CRenderer extends RajawaliVRRenderer{
     private int mode;                   //actual playback mode
-    private int timeSet;
+    private int timeSet;                //time where the video has to start playing
     public int pausedPosition;          //video length in ms
     private final int cardboardMode=2;  //cardboard mode.
     private final int gyroMode=1;       //gyro mode. the sphere is rotated using the devices sensors
-    private Context context;
+    private Context context;            //activity's context
     private MediaPlayer mMediaPlayer;   //mediaPLayer that holds the video
     private Sphere earthSphere;         //sphere where the video will be displayed
     StreamingTexture video;             //video texture to project on the sphere
     private String path;            //path del video
     private String titulo;          //titulo del video
 
+    /**
+     * Class constructor. Sets up internal parameters.
+     * @param context
+     * @param time
+     * @param p
+     * @param t
+     */
     public CRenderer(Context context, int time, String p, String t){
         super(context);
         this.context=context;
@@ -41,6 +52,10 @@ public class CRenderer extends RajawaliVRRenderer{
         titulo = t;
     }
 
+    /**
+     * Inits the scene. A sphere is placed on the world's origin. Inside of it, a video is
+     * applied as a streaming texture.
+     */
     @Override
     public void initScene(){
         //create a 100 segment sphere
@@ -52,15 +67,14 @@ public class CRenderer extends RajawaliVRRenderer{
             if(path==null){          //case: default app video
                 int id;
                 if(titulo.equalsIgnoreCase("predef1")){
-                    id=context.getResources().getIdentifier("formigal","raw",context.getPackageName());
+                    id=context.getResources().getIdentifier("agua","raw",context.getPackageName());
                 }else{
-                    id=context.getResources().getIdentifier("pyrex","raw",context.getPackageName());
+                    id=context.getResources().getIdentifier("helico","raw",context.getPackageName());
                 }
                 mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + id));
             }else{                  //case: downloaded video
                 mMediaPlayer.setDataSource(Uri.fromFile(new File(path)).getPath());
             }
-//            mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.pyrex));
         }catch(IOException ex){
             Log.e("ERROR", "couldn attach data source to the media player");
         }
@@ -70,8 +84,7 @@ public class CRenderer extends RajawaliVRRenderer{
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-//                mp.start(); //start the player only when it is prepared
-                Log.e("INTENT INFO","timeset onprepared "+timeSet);
+                //start the player only when it is prepared
                 mp.seekTo(timeSet);
                 mp.start();
             }
@@ -95,6 +108,11 @@ public class CRenderer extends RajawaliVRRenderer{
         getCurrentCamera().setPosition(0,0,0.5);
     }
 
+    /**
+     * Renders the scene
+     * @param elapsedTime
+     * @param deltaTime
+     */
     @Override
     public void onRender(final long elapsedTime, final double deltaTime){
         super.onRender(elapsedTime, deltaTime);

@@ -1,7 +1,13 @@
 package abaco_digital.freedom360;
-
 /**
- * Created by Fitur on 17/09/2015.
+ * Autor: Sandra Malpica Mallo
+ *
+ * Fecha: 11/09/2015
+ *
+ * Clase: GyroActivity.java
+ *
+ * Comments: one of the app's player activities. It manages gyro and cardboard mode. It also sets
+ * up the video control view.
  */
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -25,17 +31,13 @@ import java.util.concurrent.Semaphore;
 //TODO: add scaleGesture Listener for zooming
 //notTODO: pasar el nombre del video y el path(?)
 //notTODO: cambiar el comportamiento del modo cardboard. Hacer que salte el diálogo la primera vez que se le da al play?
-//TODO: en vez de cambio de modo secuencial, permitir elegir a qué modo se cambia al pulsar el botón(FloatingActionButton)
+//notTODO: en vez de cambio de modo secuencial, permitir elegir a qué modo se cambia al pulsar el botón(FloatingActionButton)
 //TODO: asegurarse de que se puede bloquear y desbloquear la pantalla sin problemas durante la reproducción
-//TODO: ojo, al cambiar a cardboard, si clickeas fuera durante la cuenta atras del dialogo se fastidia la operacion(comprobar)
-/**
- * Created by Fitur on 11/09/2015.
- */
+//notTODO: ojo, al cambiar a cardboard, si clickeas fuera durante la cuenta atras del dialogo se fastidia la operacion(comprobar)
 public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBarChangeListener,View.OnClickListener{
     public static View principal;   //surface, for external access
     public static View control;     //view, control video view, for external access
     public LinearLayout view;       //view, control video view
-    private RelativeLayout floatingView;
     private TextView tiempoActual;  //textview to show the actual reproduced video time
     private TextView tiempoTotal;   //textview to show the total video time
     private Thread controller;      //updates progress in seekbar and textviews
@@ -43,14 +45,13 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
     public Semaphore lock;          //stops controller thread when app is paused
     private int mode;             //video playback mode: touch(0), gyro(1), cardboard(2)
     private int tTotal,tActual;     //current and total video time
-    private int timeSent;
-    private CRenderer mRenderer;
-    private boolean status;
-    private boolean muere = false;
-    private AlertDialog dialog;
-    private String titulo;
-    private String path;
-//    private FloatingActionButton f;
+    private int timeSent;           //the time where the video has to start (sent from other player activity)
+    private CRenderer mRenderer;    //openGL ES renderer
+    private boolean status;         //true if the video wasn't paused when the activity changed
+    private boolean muere = false;  //true if the activity has to finish
+    private AlertDialog dialog;     //alert dialog for cardboard mode
+    private String titulo;          //video's title
+    private String path;            //video's path
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -67,7 +68,7 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
         status=intent.getBooleanExtra("STATUS", true);
         titulo = intent.getStringExtra("TITULO");
         path = intent.getStringExtra("PATH");
-        Log.e("INFO_CHANGE","tiempo recibido en GyroActivity "+timeSent);
+        Log.d("INFO_CHANGE","tiempo recibido en GyroActivity "+timeSent);
         //set the renderer
         mRenderer = new CRenderer(this,timeSent,path,titulo);
         setRenderer(mRenderer);
@@ -79,7 +80,6 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
         LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
         ViewGroup viewGroup = (ViewGroup)getWindow().getDecorView().findViewById(android.R.id.content);
         view = (LinearLayout)layoutInflater.inflate(R.layout.player_control, null);
-        floatingView = (RelativeLayout)layoutInflater.inflate(R.layout.floating_modes,null);
         view.setVerticalGravity(Gravity.BOTTOM);
         tiempoActual = (TextView)view.findViewById(R.id.tiempoTranscurrido);
         tiempoTotal = (TextView)view.findViewById(R.id.tiempoTotal);
@@ -117,7 +117,6 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
         modeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                floatingView.setVisibility(View.VISIBLE);
 
                 //the existence of the needed sensors has already been checked in TouchActivity
                 GyroActivity.this.mode = (GyroActivity.this.mode + 1) % 3;
@@ -132,23 +131,7 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
                         intent.putExtra("TITULO", titulo);
                         intent.putExtra("PATH", path);
                         mRenderer.getMediaPlayer().stop();
-                        /*Intent intent = new Intent(GyroActivity.this, TouchActivity.class);
-                        intent.putExtra("TIME", mRenderer.getMediaPlayer().getCurrentPosition());
-                        //startActivity(intent);
-                        intent.putExtra("STATUS", mRenderer.getMediaPlayer().getCurrentPosition());
-                        setResult(19, intent);
-                        mRenderer.stopRendering();
-                        try{
-                            lock.acquire();
-//                            Log.e("THREAD SAFE", "lock acquired "+lock.availablePermits());
-                        }catch(InterruptedException ex){}
-                        muere=true;
-
-                        mRenderer.getMediaPlayer().release();
-                        lock.release();*/
-
-//                        Log.e("THREAD SAFE", "lock released " + lock.availablePermits());
-                        Log.e("INFO_CHANGE","tiempo enviado a touchActivity "+timeSent);
+                        Log.d("INFO_CHANGE","tiempo enviado a touchActivity "+timeSent);
                         startActivity(intent);
                         finish();
                         break;
@@ -161,7 +144,6 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
                     case 2:             //CARDBOARD MODE
                         modeButton.setImageLevel(2);
                         getSurfaceView().setVRModeEnabled(true);
-//                        lanzarGiro();
                         mRenderer.getMediaPlayer().pause();
                         timer.cancel();
                         playButton.setImageLevel(1);
@@ -230,37 +212,27 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
             @Override
             public void run() {
                 //run while the mediaPlayer exists
-//                while(primera || renderer.getMediaPlayer()!=null){
                 while((primera || mRenderer.getMediaPlayer()!=null) && !muere){
                     try {
                         //acquire semaphore lock//used in onPause method
                         try {
                             lock.acquire();
-//                            Log.e("THREAD SAFE", "lock acquired controller  "+lock.availablePermits());
-                        } catch (InterruptedException ex) {
-                        }
+                        } catch (InterruptedException ex) {}
                         //wait until the mediaPlayer(prepared in the renderer) is not null
-//                    while (renderer.getMediaPlayer()==null){}
-                        while (!muere && mRenderer.getMediaPlayer() == null) {
-                        }
+                        while (!muere && mRenderer.getMediaPlayer() == null) {}
                         //wait until the mediaPlayer is playing
-//                    while (!renderer.getMediaPlayer().isPlaying()){}
-                        while (!muere && !mRenderer.getMediaPlayer().isPlaying()) {
-                        }
+                        while (!muere && !mRenderer.getMediaPlayer().isPlaying()) {}
                         //set the total video time (only one executed once)
                         if (primera && !muere) {
-//                        tTotal=renderer.getMediaPlayer().getDuration()/1000;
                             tTotal = mRenderer.getMediaPlayer().getDuration() / 1000;
                         }
                         //wait 1 second
                         try {
                             Thread.sleep(1000);
                             //get current mediaPlayer position
-//                        posicion = renderer.getMediaPlayer().getCurrentPosition();
                             posicion = mRenderer.getMediaPlayer().getCurrentPosition();
                             tActual = posicion / 1000;
                             //sets the seekbar max to update progress with normal position
-//                    seekBar.setMax(renderer.getMediaPlayer().getDuration());
                             seekBar.setMax(mRenderer.getMediaPlayer().getDuration());
                             //sends information to the UI thread
                             //UI elements can only be modified there
@@ -285,7 +257,6 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
                         }
                     }catch(IllegalStateException ex2){ lock.release();}
                     lock.release(); //releases the semaphores lock
-//                    Log.e("THREAD SAFE", "lock released controller "+lock.availablePermits());
                 }
 
             }
@@ -295,7 +266,6 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
         getSurfaceView().setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.e("CONTROL VIEW", "surfaceview ontouch triggered");
                 if(event.getAction()==MotionEvent.ACTION_UP){
                     timer.cancel();
                     if (GyroActivity.this.view.getVisibility() == View.INVISIBLE) {
@@ -314,37 +284,6 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
     /******************************************************************************/
     /*                            Activity methods                                */
     /******************************************************************************/
-
-    public void lanzarGiro(){
-        mRenderer.getMediaPlayer().pause();
-        //set listeners to the buttons and seekbar progress control
-        final ImageButton playButton = (ImageButton) view.findViewById(R.id.playbutton);
-        playButton.setImageLevel(1);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Prepare Cardboard")
-                .setMessage("Place your device inside the cardboard. ")
-                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog2, int which) {
-                        timer.start();
-                        AlertDialog.Builder b = new AlertDialog.Builder(GyroActivity.this);
-                        b.setMessage("The video will start in 10 seconds");
-                        dialog = b.create();
-                        dialog.show();
-                    }
-                });
-        dialog = builder.create();
-        timer=new CountDownTimer(10000,1000){
-            public void onFinish(){
-                mRenderer.getMediaPlayer().seekTo(0);
-                mRenderer.getMediaPlayer().start();
-                dialog.cancel();}
-            public void onTick(long l){dialog.setMessage("The video will start in "+(int)l/1000+" seconds");}
-        };
-        dialog.show();
-        GyroActivity.this.view.setVisibility(View.INVISIBLE);
-//        timer.start();
-    }
 
     //called when the user clicks on the screen
     @Override
@@ -368,9 +307,6 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
             getSurfaceView().onPause();
             mRenderer.onPause();
         }
-        /*try{
-            lock.acquire();
-        }catch(InterruptedException ex){}*/
         Log.e("SCREEN","onpause called");
     }
 
@@ -390,9 +326,9 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
                 timer.start();
             }
         }
-//        lock.release();
         Log.e("SCREEN", "onresume called");
     }
+
     /********************************************************************************/
     /*                             SeekBarListener methods                          */
     /********************************************************************************/
@@ -402,7 +338,6 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
         //if the user provoked the change
         if (fromUser && !muere) {
             //change mediaPLayer position
-//            renderer.getMediaPlayer().seekTo(progress);
             mRenderer.getMediaPlayer().seekTo(progress);
             seekBar.setProgress(progress);  //change the seekbar progress
             progress=progress/1000;

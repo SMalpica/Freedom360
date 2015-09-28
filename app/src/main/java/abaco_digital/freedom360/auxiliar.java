@@ -4,7 +4,7 @@ package abaco_digital.freedom360;
  *
  * Fecha: 22/06/2015
  *
- * Clase: GaleriaPrincipal.java
+ * Clase: auxiliar.java
  *
  * Comments: aux. class, used to contain useful or test methods.
  */
@@ -41,11 +41,11 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public class auxiliar {
 
-    protected final static String fuente = "fonts/DroidSerif-Regular.ttf";
-    protected final static String carpeta = "videos360";
-    protected final static File directorio = encontrarDirectorio();
-    protected final static String extension = ".mp4";
-    protected static Activity principal=null;
+    protected final static String fuente = "fonts/DroidSerif-Regular.ttf";  //font used in the app's text
+    protected final static String carpeta = "videos360";                    //app folder name
+    protected final static File directorio = encontrarDirectorio();         //app's directory
+    protected final static String extension = ".mp4";                       //videos extension
+    protected static Activity principal=null;                               //reference to main activity
 
     /*it sets whether the device is a tablet or a phone depending on the screen size
     * this method is intended to be used to switch between different layouts
@@ -67,31 +67,6 @@ public class auxiliar {
 
     }
 
-    /**
-     * returns the device screen's inches
-     * @param context context
-     * @return inches
-     */
-    public static double getPulgadas (Context context){
-        try{
-            //compute screen size
-            DisplayMetrics dm = context.getResources().getDisplayMetrics();
-            float screenWidth = dm.widthPixels / dm.xdpi;
-            float screenHeight = dm.heightPixels / dm.ydpi;
-            double size = Math.sqrt(Math.pow(screenWidth,2)+Math.pow(screenHeight,2));
-            return size;
-        }catch(Throwable t){
-            Log.e("LOG", "Failed to compute screen size", t);
-            return -1;
-        }
-    }
-    public static void setFuente (TextView textView){
-        //obtain the views size
-        textView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        Rect out = new Rect();
-        textView.getDrawingRect(out);
-
-    }
 
     /**
      * This method creates a frame sample from the video named <img> and then stores
@@ -100,18 +75,9 @@ public class auxiliar {
      * @param context context
      */
     public static void crearImagen(Video video, Context context){
-
-        Log.e("FRAME_SAMPLE","en crear imagen");
-        /*MediaMetadataRetriever md = new MediaMetadataRetriever();
-        String path = video.getPath();  //get the video path*/
-
-
         File file = new File(directorio,video.getImagen());
-        Log.e("FRAME_SAMPLE","path del video "+file.getPath());
+        Log.d("FRAME_SAMPLE", "path del video " + file.getPath());
         FFmpegMediaMetadataRetriever md = new FFmpegMediaMetadataRetriever();
-        //check that file exists
-        Log.e("SYSO", "existe: " + file.exists());
-        Log.e("SYSO", "nombre: " + file.getAbsolutePath());
         Bitmap bmp = null;
 
         try{
@@ -120,36 +86,17 @@ public class auxiliar {
             //take frame, second 2, closest sync frame found
             bmp = md.getFrameAtTime(2000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC);
             md.release();   //release the manager
-
         }catch(IllegalArgumentException ex){Log.e("METADATA","illegal argument");}
 
-        //if frame couldn't be taken
+        //if frame could be taken
         if(bmp != null){
-            //set a text with the video's title instead
-            /*TextView texto = new TextView(principal.getApplicationContext());
-            texto.setText(file.getName());
-            RelativeLayout padre = (RelativeLayout)findViewById(R.id.padre);
-            texto.setGravity(Gravity.CENTER_HORIZONTAL);
-            texto.setPadding(15,15,15,15);
-            padre.addView(texto);*/
-//            String texto = video.getImagen();
-            //success
-
-            //set the imageview source and scale it accordingly to the available size
-            /*ImageView view = (ImageView) findViewById(R.id.imageView);
-            view.setImageBitmap(bmp);
-            view.setScaleType(ImageView.ScaleType.CENTER_CROP);*/
-
+            //get the aproximated size of the image we want
             DisplayMetrics dm = new DisplayMetrics();
             Display display = principal.getWindowManager().getDefaultDisplay();
             display.getMetrics(dm);
             int height = (int)dm.density*dm.heightPixels*5/6;
             int width = height*2/3;
-                    /*Display display = getWindowManager().getDefaultDisplay();
-            DisplayMetrics outMetrics = new DisplayMetrics();
-            display.getMetrics(outMetrics);*/
             try {
-                Log.e("FRAME_SAMPLE","aqui no llego");
                 //rescale the frame sample
                 Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                 float originalWidth = bmp.getWidth(), originalHeight = bmp.getHeight();
@@ -162,47 +109,38 @@ public class auxiliar {
                 Paint paint = new Paint();
                 paint.setFilterBitmap(true);
                 canvas.drawBitmap(bmp, transformation, paint);
-                Log.e("FRAME_SAMPLE", "fin redimensionado");
-                try{//store the bitmap in the drawable folder
-                    Log.e("FRAME_SAMPLE","nombre del video "+video.getImagen());
-
+                try{//store the bitmap in the pictures folder
+                    //obtain a file to store the image
                     File files = obtenerArchivoImagen(video.getImagen());
-                    Log.e("FRAME_SAMPLE",files.getPath());
-//                File file = new File (path);
-                    Log.d("CREAR_IMAGEN3", "file creado");
                     FileOutputStream out = new FileOutputStream(files);
-                    Log.d("CREAR_IMAGEN3", "outputStream creado");
-//                    Bitmap nuevo2 = Bitmap.createScaledBitmap(
-//                            bmp, 275*2, height*2, false);
+                    //create the bitmap
                     Bitmap mitad = Bitmap.createBitmap(bmp,(int)(originalWidth/2 - originalHeight/2),0,(int)originalHeight,(int)originalHeight);
+                    //scale the bitmap
                     Bitmap escalado = Bitmap.createScaledBitmap(mitad,width,height,false);
                     escalado.compress(Bitmap.CompressFormat.JPEG, 100, out);
-//                    Bitmap nuevo = Bitmap.createBitmap(nuevo2,0,0,275,height);
-//                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
-//                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, out); // saving the Bitmap to a file compressed as a JPEG with 100% compression rate
-                    Log.d("CREAR_IMAGEN3", "bmp compressed");
                     out.flush();
                     out.close(); //close the stream
-                    Log.d("CREAR_IMAGEN3", "outputStream closed");
+                    //store the image
                     MediaStore.Images.Media.insertImage(context.getContentResolver(), files.getAbsolutePath(), files.getName(), files.getName());
-                    Log.d("CREAR_IMAGEN3", "imagen guardada");
                 }catch(Exception ex){
                     Log.e("CAUSA_FILE",ex.getMessage());ex.printStackTrace();}
             } catch (IllegalArgumentException ex) {
-                Log.e("FRAME_SAMPLE","error illegalArgument");
-                System.out.println("causa fd ilegal");ex.printStackTrace();
+                Log.e("FRAME_SAMPLE", "error illegalArgument");
             } catch (RuntimeException ex) {
-                System.out.println("causa fd runtime");ex.printStackTrace();
                 Log.e("FRAME_SAMPLE", "error runtimeException");
             }finally {
                 try {
-                    md.release();
-                } catch (RuntimeException ignored) {
-                }
+                    md.release();   //release the manager
+                } catch (RuntimeException ignored) {}
             }
         }
     }
 
+    /**
+     * This method returns the file where the video frameSample should be stored, if exists.
+     * @param nombreVideo
+     * @return
+     */
     public static File obtenerArchivoImagen(String nombreVideo){
         File directorio;
         //obtain the external or internal available directory
@@ -211,6 +149,7 @@ public class auxiliar {
         }else{
             directorio = Environment.getDataDirectory();
         }
+        //create directory
         File f = new File(directorio.getPath()+"/"+auxiliar.carpeta);
         if(!f.exists()){
             f.mkdirs();
@@ -222,8 +161,12 @@ public class auxiliar {
         return file;
     }
 
+    /**
+     * This method checks whether the video frame sample has been created or not.
+     * @param nombreVideo
+     * @return
+     */
     public static int existeImagen(String nombreVideo){
-        Log.e("FRAME_SAMPLE","en existe imagen, nombre video: "+nombreVideo);
         if(nombreVideo.contains(auxiliar.extension)){
             nombreVideo = nombreVideo.substring(0,nombreVideo.indexOf("."))+".jpeg";
         }
@@ -234,12 +177,11 @@ public class auxiliar {
         }else{
             directorio = Environment.getDataDirectory();
         }
+        //create the file
         File f = new File(directorio.getPath()+"/"+auxiliar.carpeta);
         if(!f.exists()){
             f.mkdirs();
         }
-        Log.e("FRAME_SAMPLE","directorio imagen "+f.getPath());
-        Log.e("FRAME_SAMPLE","nombre imagen "+nombreVideo);
         String[] nombres = f.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
@@ -255,9 +197,10 @@ public class auxiliar {
         }
         return 0;
     }
+
     /**
      *
-     * @return name of a new video
+     * @return name for a new downloaded video
      */
     public static String getNombreVideo(){
         int ultimo = 1;
@@ -302,11 +245,11 @@ public class auxiliar {
         File directorio;
         //obtain the external or internal available directory
         if(auxiliar.isExternalStorageWritable()){
-            Log.e("TABLET","external storage is writable");
-            Log.e("TABLET","media state "+Environment.getExternalStorageState());
+            Log.d("TABLET","external storage is writable");
+            Log.d("TABLET","media state "+Environment.getExternalStorageState());
             directorio = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
         }else{
-            Log.e("TABLET","external storage is not writable");
+            Log.d("TABLET","external storage is not writable");
             directorio = Environment.getDataDirectory();
         }
         File f = new File(directorio.getPath()+"/"+auxiliar.carpeta);

@@ -27,26 +27,3 @@
 
     </RelativeLayout>
 </com.github.rongi.rotate_layout.layout.RotateLayout>
-    <!--<?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="3dp" android:id="@+id/padre"
-        android:rotation="90">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:padding="2sp"
-            android:id="@+id/miniatura"
-            android:src="@drawable/sinimagen"
-            android:contentDescription="@string/legend_miniatura"
-            android:background="#ff6a6a6a"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
-            android:layout_margin="4dp"
-            />
-
-    </RelativeLayout>-->

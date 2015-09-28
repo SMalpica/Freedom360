@@ -1,7 +1,13 @@
 package abaco_digital.freedom360;
-
 /**
- * Created by Fitur on 17/09/2015.
+ * Autor: Sandra Malpica Mallo
+ *
+ * Fecha: 16/09/2015
+ *
+ * Clase: TouchRenderer.java
+ *
+ * Comments: Rajawali renderer, used in touch mode. It sets the scene up.
+ * Allows sphere rotation with user's touch events
  */
 import android.app.Activity;
 import android.content.Context;
@@ -24,30 +30,27 @@ import org.rajawali3d.renderer.RajawaliRenderer;
 
 import java.io.File;
 import java.io.IOException;
-
-/**
- * Created by Fitur on 16/09/2015.
- */
 public class TouchRenderer extends RajawaliRenderer{
     private Context context;        //renderer context
     private Sphere earthSphere;     //sphere where the video will be displayed
     private MediaPlayer mMediaPlayer;   //mediaPLayer that holds the video
     StreamingTexture video;         //video texture to project on the sphere
     public int pausedPosition;         //video length in ms
-    private int timeSet;
+    private int timeSet;            //time where the video has to start playing
     private String path;            //path del video
     private String titulo;          //titulo del video
     /*********************************************************************************************/
-    private GestureDetector detector;
-    private ScaleGestureDetector scaleDetector;
-    private GestureListener gListener;
-    private ScaleListener sListener;
-    private View.OnTouchListener touchListener;
-    private boolean isRotating;
-    private boolean isScaling;
-    private float xInicial,yInicial;
+    private GestureDetector detector;           //gesture detector
+    private ScaleGestureDetector scaleDetector; //scale detector (for zooming)
+    private GestureListener gListener;          //gesture listener
+    private ScaleListener sListener;            //scale listener
+    private View.OnTouchListener touchListener; //touch events listener
+    private boolean isRotating;                 //true if the sphere is rotating
+    private boolean isScaling;                  //true if the sphere is scaling
+    private float xInicial,yInicial;            //inicial touch point
+    //sphere's yaw and pitch, used for rotation
     private double yaw,pitch, yawAcumulado=0, pitchAcumulado=0, yawAcumuladoR=0, pitchAcumuladoR=0;
-    private double reduccion;
+    //physical to logical (in 3D world) conversion: screen scroll to sphere rotation
     private final double gradosPorBarridoX=120, gradosPorBarridoY=90;
     private final double gradosPorPixelYaw, gradosPorPixelPitch;
     /*********************************************************************************************/
@@ -62,11 +65,7 @@ public class TouchRenderer extends RajawaliRenderer{
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
         gradosPorPixelPitch = gradosPorBarridoY / outMetrics.heightPixels;
         gradosPorPixelYaw = gradosPorBarridoX / outMetrics.widthPixels;
-        Log.e("NUEVO RENDERER","gradosyaw "+gradosPorPixelYaw+" gradospitch "+gradosPorPixelPitch);
         addListeners();
-        /*Log.e("NUEVO RENDERER","vheight "+getViewportHeight()+" viewport width "+getViewportWidth());
-        gradosPorPixelYaw = gradosPorBarridoX / getViewportWidth();
-        gradosPorPixelPitch = gradosPorBarridoY / getViewportHeight();*/
         this.path=path;
         this.titulo=titulo;
     }
@@ -106,7 +105,6 @@ public class TouchRenderer extends RajawaliRenderer{
                         return true;
                     }
                 };
-                Log.e("NUEVO_RENDERER","principal "+(TouchActivity.principal!=null));
                 TouchActivity.principal.setOnTouchListener(touchListener);
             }
         });
@@ -122,9 +120,9 @@ public class TouchRenderer extends RajawaliRenderer{
             if(path==null){          //case: default app video
                 int id;
                 if(titulo.equalsIgnoreCase("predef1")){
-                    id=context.getResources().getIdentifier("formigal","raw",context.getPackageName());
+                    id=context.getResources().getIdentifier("agua","raw",context.getPackageName());
                 }else{
-                    id=context.getResources().getIdentifier("pyrex","raw",context.getPackageName());
+                    id=context.getResources().getIdentifier("helico","raw",context.getPackageName());
                 }
                 mMediaPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + id));
             }else{                  //case: downloaded video
@@ -158,26 +156,12 @@ public class TouchRenderer extends RajawaliRenderer{
         earthSphere.setPosition(0, 0, 0);
         //add the sphere to the rendering scene
         getCurrentScene().addChild(earthSphere);
-        Log.e("ESFERA", "posicion " + earthSphere.getPosition());
-        Log.e("ESFERA", "camara " + getCurrentCamera().getPosition());
         //invert the sphere (to display the video on the inside of the sphere)
         earthSphere.setScaleX(1.15);
         earthSphere.setScaleY(1.15);
         earthSphere.setScaleZ(-1.15);
 
-        Log.e("ESFERA", "camara mirando a " + getCurrentCamera().getLookAt());
-        Log.e("ESFERA", "camara en cero? " + getCurrentCamera().getPosition());
-        Log.e("ESFERA", "camara mirando a " + getCurrentCamera().getLookAt());
-
-        //create the arcball camera and target the sphere
-//        arcballCamera = new CamaraActualizada(context,TouchActivity.principal,earthSphere);
-        Log.e("CAMARA", "camara creada");
-        Log.e("CAMARA", "camara movida");
-        //switch cameras
-//        getCurrentScene().replaceAndSwitchCamera(getCurrentCamera(), arcballCamera);
-//        arcballCamera.setPosition(0, 0, 0.5);
         getCurrentCamera().setPosition(0,0,0.5);
-        Log.e("CAMARA", "switch camara");
     }
 
 
@@ -196,27 +180,11 @@ public class TouchRenderer extends RajawaliRenderer{
                 pausedPosition = mMediaPlayer.getCurrentPosition();
             }
         }
-//        if(isRotating) {
         yawAcumuladoR = (yawAcumulado) * 0.04;
         pitchAcumuladoR = (pitchAcumulado) * 0.04;
-        Log.e("NUEVO_RENDERER", "yaw acumulado " + yaw + " pitch acumulado " + pitch);
         Quaternion q = new Quaternion();
         q.fromEuler(yawAcumuladoR, pitchAcumuladoR, 0);
         earthSphere.setOrientation(q);
-//    }
-        /*else{
-            double yawaux = yawAcumulado * reduccion;
-            double pitchaux = pitchAcumulado * reduccion;
-            Quaternion q = new Quaternion();
-            q.fromEuler(yawAcumulado * 0.05, pitchAcumulado * 0.05, 0);
-            earthSphere.setOrientation(q);
-            reduccion*=0.99;
-            Log.e("NUEVO_RENDERER","reduccion "+reduccion);
-        }*/
-//        earthSphere.setRotY(pitchAcumulado);
-//        earthSphere.setRotX(yawAcumulado);
-//        getCurrentCamera().setCameraPitch(Math.toRadians(pitchAcumulado));
-//        getCurrentCamera().setCameraYaw(Math.toRadians(yawAcumulado));
     }
 
     //returns this renderer media player
@@ -242,7 +210,6 @@ public class TouchRenderer extends RajawaliRenderer{
         super.onResume();
         if(mMediaPlayer!=null){
             mMediaPlayer.seekTo(pausedPosition);
-            Log.e("INTENT INFO","on resume called "+pausedPosition);
         }
     }
 
@@ -253,11 +220,21 @@ public class TouchRenderer extends RajawaliRenderer{
     }
 
     /*********************************************************************************************/
+    /**
+     * called when the rotation starts
+     * @param x
+     * @param y
+     */
     private void startRotation(float x, float y){
         xInicial = x;
         yInicial = y;
     }
 
+    /**
+     * called during the consecutive events of a rotation movement
+     * @param x
+     * @param y
+     */
     private void updateRotation(float x, float y){
         float difX = xInicial - x;
         float difY = yInicial - y;
@@ -267,11 +244,14 @@ public class TouchRenderer extends RajawaliRenderer{
         pitchAcumulado+=pitch;
     }
 
+    /**
+     * event listener. if the user scrolls his finger through the screen, it sends the
+     * touch event to calculate the sphere's rotation
+     */
     private class GestureListener extends GestureDetector.SimpleOnGestureListener{
         @Override
         public boolean onScroll(MotionEvent event1, MotionEvent event2, float distanceX, float distanceY) {
             //starts or updates the rotation with the upcoming event x and y screen values
-            Log.e("NUEVO_RENDERER","onScroll reached");
             if(!isRotating) {
                 startRotation(event2.getX(), event2.getY());
                 isRotating=true;
@@ -284,12 +264,18 @@ public class TouchRenderer extends RajawaliRenderer{
         }
     }
 
+    /**
+     * event listener. Zooms in or out depending on the user's action
+     */
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
+        //TODO: arreglar!!!
         //zooms in or out according to the scale detector value
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            double fov = Math.max(30.0D, Math.min(54.0D, 45.0D * (1.0D / (double)detector.getScaleFactor())));
-            getCurrentCamera().setFieldOfView(fov);
+//            double fov = Math.max(30.0D, Math.min(54.0D, 45.0D * (1.0D / (double)detector.getScaleFactor())));
+//            getCurrentCamera().setFieldOfView(fov);
+//            detector.
+            earthSphere.setScale(detector.getScaleFactor());
             return true;
         }
 
