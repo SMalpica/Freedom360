@@ -16,7 +16,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.method.Touch;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -72,7 +71,7 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         principal = surface;
         //set the renderer
         trenderer = new TouchRenderer(this,timeSent,path,titulo);
-
+        trenderer.setFrameRate(25);
         // Add mSurface to your root view
         addContentView(surface, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT));
         surface.setSurfaceRenderer(trenderer);
@@ -151,6 +150,7 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                finish();
                 System.runFinalization();
                 System.exit(0); //cerrar el sistema.
             }
@@ -176,7 +176,6 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                     //set the total video time (only one executed once)
                     if(primera){
                         tTotal=trenderer.getMediaPlayer().getDuration()/1000;
-                        primera = false;
                     }
                     //wait 1 second
                     try{
@@ -253,9 +252,14 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     //stops the activity, the mediaplayer and the renderer, as well as the auxiliary thread
     @Override
     public void onPause() {
-        super.onPause();
+/*        super.onPause();
         surface.onPause();
-        trenderer.onPause();
+//        trenderer.onPause();
+//        trenderer.getMediaPlayer().pause();*/
+        super.onPause();
+        finish();
+        System.runFinalization();
+        System.exit(0);
     }
 
     //called when the activity is resumed
@@ -263,14 +267,17 @@ public class TouchActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     //also brings back de video controller view
     @Override
     public void onResume() {
-        super.onResume();
+/*        super.onResume();
         surface.onResume();
-        if(principal!=null) trenderer.onResume();
+//        trenderer.onResume();
+//        if(principal!=null) trenderer.onResume();
         if(view.getVisibility()!=View.VISIBLE){
             view.setVisibility(View.VISIBLE);
             timer.cancel(); //restarts the timer
-            timer.start();
-        }
+            timer.start();*/
+//        }
+//        if(trenderer.getMediaPlayer()!=null) trenderer.getMediaPlayer().start();
+        super.onResume();
     }
 
     /********************************************************************************/

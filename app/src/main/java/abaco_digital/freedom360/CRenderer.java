@@ -133,5 +133,27 @@ public class CRenderer extends RajawaliVRRenderer{
     public MediaPlayer getMediaPlayer(){
         return this.mMediaPlayer;
     }
+
+    //called when the renderer is paused. it pauses the renderer and the mediaPlayer
+    //storing its position
+    @Override
+    public void onPause(){
+        super.onPause();
+        if (mMediaPlayer!= null && mMediaPlayer.isPlaying())
+        {    mMediaPlayer.pause();
+            pausedPosition=mMediaPlayer.getCurrentPosition();
+        }
+    }
+
+    //called when the renderer is resumed from a pause.
+    //resumes mediaPlayer state
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(mMediaPlayer!=null){
+            mMediaPlayer.seekTo(pausedPosition);
+            mMediaPlayer.start();
+        }
+    }
 }
 

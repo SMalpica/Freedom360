@@ -210,6 +210,7 @@ public class TouchRenderer extends RajawaliRenderer{
         super.onResume();
         if(mMediaPlayer!=null){
             mMediaPlayer.seekTo(pausedPosition);
+            mMediaPlayer.start();
         }
     }
 
@@ -268,14 +269,22 @@ public class TouchRenderer extends RajawaliRenderer{
      * event listener. Zooms in or out depending on the user's action
      */
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
-        //TODO: arreglar!!!
         //zooms in or out according to the scale detector value
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-//            double fov = Math.max(30.0D, Math.min(54.0D, 45.0D * (1.0D / (double)detector.getScaleFactor())));
-//            getCurrentCamera().setFieldOfView(fov);
-//            detector.
-            earthSphere.setScale(detector.getScaleFactor());
+            if(detector.getScaleFactor()>1){
+                if(earthSphere.getScaleX()*1.1<120){
+                    earthSphere.setScaleX(earthSphere.getScaleX()*1.1);
+                    earthSphere.setScaleY(earthSphere.getScaleY() * 1.1);
+                    earthSphere.setScaleZ(earthSphere.getScaleZ() * 1.1);
+                }
+            }else{
+                if(earthSphere.getScaleX()*0.9>0.95) {
+                    earthSphere.setScaleX(earthSphere.getScaleX() * 0.9);
+                    earthSphere.setScaleY(earthSphere.getScaleY() * 0.9);
+                    earthSphere.setScaleZ(earthSphere.getScaleZ() * 0.9);
+                }
+            }
             return true;
         }
 

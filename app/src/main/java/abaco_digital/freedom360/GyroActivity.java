@@ -64,13 +64,14 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
         //get intent information
         Intent intent = getIntent();
         mode=intent.getIntExtra("MODE",1);
-        timeSent=intent.getIntExtra("TIME",0);
+        timeSent=intent.getIntExtra("TIME", 0);
         status=intent.getBooleanExtra("STATUS", true);
         titulo = intent.getStringExtra("TITULO");
         path = intent.getStringExtra("PATH");
         Log.d("INFO_CHANGE","tiempo recibido en GyroActivity "+timeSent);
         //set the renderer
         mRenderer = new CRenderer(this,timeSent,path,titulo);
+        mRenderer.setFrameRate(25);
         setRenderer(mRenderer);
         getSurfaceView().setKeepScreenOn(true);
         principal=getSurfaceView();
@@ -225,6 +226,7 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
                         //set the total video time (only one executed once)
                         if (primera && !muere) {
                             tTotal = mRenderer.getMediaPlayer().getDuration() / 1000;
+                            Log.e("SEEKBAR","entramos en set tTotal");
                         }
                         //wait 1 second
                         try {
@@ -301,13 +303,16 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
     //stops the activity, the mediaplayer and the renderer, as well as the auxiliary thread
     @Override
     public void onPause() {
-        super.onPause();
+        /*super.onPause();
         if(!muere){
-
             getSurfaceView().onPause();
             mRenderer.onPause();
         }
-        Log.e("SCREEN","onpause called");
+        Log.e("SCREEN","onpause called");*/
+        super.onPause();
+        finish();
+        System.runFinalization();
+        System.exit(0);
     }
 
     //called when the activity is resumed
@@ -315,9 +320,8 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
     //also brings back de video controller view
     @Override
     public void onResume() {
-        super.onResume();
+       /* super.onResume();
         if(!muere){
-
             getSurfaceView().onResume();
             mRenderer.onResume();
             if(view.getVisibility()!=View.VISIBLE){
@@ -326,7 +330,8 @@ public class GyroActivity extends RajawaliVRActivity implements SeekBar.OnSeekBa
                 timer.start();
             }
         }
-        Log.e("SCREEN", "onresume called");
+        Log.e("SCREEN", "onresume called");*/
+        super.onResume();
     }
 
     /********************************************************************************/

@@ -78,6 +78,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -92,7 +93,7 @@ public class GaleriaPrincipal extends Activity {
 
     private VideoAdapter videoAdapter;              //listview adapter.
     private AsyncVideoDownloader videoDownloader;   //asynchronous video downloader
-    private ArrayList<Video> lista;                 //list with the gallery's video
+//    private ArrayList<Video> lista;                 //list with the gallery's video
     private ListView lv;                            //listview with the gallery elements
     public boolean esTablet;                        //true if the device is a tablet (i.e: screen is bigger than 5')
 
@@ -146,12 +147,12 @@ public class GaleriaPrincipal extends Activity {
         }
 
         //fill the gallery with the available videos
-        lista = fillData(getApplicationContext());
+        ArrayList<Video> lista = fillData(getApplicationContext());
         lv = (ListView)findViewById(R.id.galeria);
         lv.setPadding(0, 0, 0, 0);
         lv.setVerticalScrollBarEnabled(false);
         lv.setDivider(null);
-        //set each item's click listener
+        /*//set each item's click listener
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -240,8 +241,8 @@ public class GaleriaPrincipal extends Activity {
                     alertD.show();
                 }
             }
-        });
-        //set item's onLongClickListeners
+        });*/
+        /*//set item's onLongClickListeners
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             Video video;
 
@@ -310,7 +311,7 @@ public class GaleriaPrincipal extends Activity {
                     }
                 }
             }
-        });
+        });*/
         //set listview's adapter
         videoAdapter = new VideoAdapter(getApplicationContext(), lista);
         lv.setAdapter(videoAdapter);
@@ -360,7 +361,7 @@ public class GaleriaPrincipal extends Activity {
     public class VideoAdapter extends BaseAdapter {
         private Context contexto;
         private List<Video> list;
-        private ImageView item;
+//        private ImageView item;
 
         public VideoAdapter(Context context, List<Video> lista){
             super();
@@ -384,18 +385,25 @@ public class GaleriaPrincipal extends Activity {
 
         @Override
         public View getView(final int posicion, View convertView, final ViewGroup parent){
-            convertView=null;
+//            convertView=null;
+            ViewHolder holder = null;
             //get the data item for this position
             final Video video = (Video)getItem(posicion);
-            // always inflate the view so that old views do not appear twice
-            convertView = LayoutInflater.from(contexto).inflate(R.layout.list_item, parent, false);
-            // Lookup view for data population
-            item = (ImageView) convertView.findViewById(R.id.miniatura);
-            item.setOnLongClickListener(new View.OnLongClickListener() {
+            if(convertView==null){
+                // always inflate the view so that old views do not appear twice
+                convertView = LayoutInflater.from(contexto).inflate(R.layout.list_item, parent, false);
+                // Lookup view for data population
+                holder = new ViewHolder();
+                holder.imageView = (ImageView) convertView.findViewById(R.id.miniatura);
+                convertView.setTag(holder);
+            }else{
+                holder = (ViewHolder)convertView.getTag();
+            }
+            holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     Log.d("MOTION", "child long clicked");
-                    final Video video = lista.get(posicion);
+                    final Video video = list.get(posicion);
                     //item mas opens a dialog for downloads if long clicked
                     if (video.getImagen().equalsIgnoreCase("mas")) {
                         LayoutInflater layoutInflater = LayoutInflater.from(GaleriaPrincipal.this);
@@ -480,7 +488,7 @@ public class GaleriaPrincipal extends Activity {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
 //                                            lv.removeViewAt(posicion);
-                                                lista.remove(posicion);
+                                                list.remove(posicion);
                                                 archivo.delete();
                                                 File imagen = auxiliar.obtenerArchivoImagen(video.getImagen());
                                                 imagen.delete();
@@ -527,11 +535,11 @@ public class GaleriaPrincipal extends Activity {
                     }
                 }
             });
-            item.setOnClickListener(new View.OnClickListener() {
+            holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.e("MOTION", "child clicked");
-                    Video video = lista.get(posicion);
+                    Video video = list.get(posicion);
                     if (!video.getImagen().equalsIgnoreCase("mas")) {
 //                    Intent intent = new Intent(GaleriaPrincipal.this, MainActivity.class);
                         Intent intent = new Intent(GaleriaPrincipal.this, TouchActivity.class);
@@ -632,32 +640,37 @@ public class GaleriaPrincipal extends Activity {
             //get the image id
             int id = contexto.getResources().getIdentifier(nombre, "drawable", contexto.getPackageName());
             if(id!=0){
-                item.setImageResource(id);
-                item.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                item.setClickable(true);
+                holder.imageView.setImageResource(id);
+                holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                holder.imageView.setClickable(true);
                 if(!video.getImagen().equalsIgnoreCase("mas")){
                     //take out background color
-                    item.setBackgroundColor(Color.TRANSPARENT);
-                    item.setPadding(0, 0, 0, 0);
+//                    holder.imageView.setBackgroundColor(Color.TRANSPARENT);
+                    holder.imageView.setPadding(0, 0, 0, 0);
                 }else{
-                    item.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    holder.imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                    holder.imageView.setBackgroundColor();
                 }
             }else{
                 File archivoImagen = auxiliar.obtenerArchivoImagen(video.getImagen());
                 if(archivoImagen.exists()){
-                    item.setImageURI(Uri.parse(archivoImagen.getAbsolutePath()));
-                    item.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    item.setBackgroundColor(Color.TRANSPARENT);
-                    item.setPadding(0, 0, 0, 0);
+                    holder.imageView.setImageURI(Uri.parse(archivoImagen.getAbsolutePath()));
+                    holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//                    holder.imageView.setBackgroundColor(Color.TRANSPARENT);
+                    holder.imageView.setPadding(0, 0, 0, 0);
                 }
             }
             //set scale type and return the view
-            if(!video.getImagen().equalsIgnoreCase("mas")) item.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            else item.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            if(!video.getImagen().equalsIgnoreCase("mas")) holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            else holder.imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             return convertView;
         }
     }
 
+
+    public static class ViewHolder{
+        public ImageView imageView;
+    }
 
     /**
      * Autor: Sandra Malpica Mallo
@@ -751,9 +764,9 @@ public class GaleriaPrincipal extends Activity {
                 video.setPath(auxiliar.directorio.getPath() + "/" + result);
                 video.setURL(result);
                 video.crearFrameSample();
-                lista.add(0, video);
+                videoAdapter.list=fillData(getApplicationContext());
+                videoAdapter.list.add(0, video);
                 lv.setSelection(0);
-                lista=fillData(getApplicationContext());
                 videoAdapter.notifyDataSetChanged();
                 progreso.cancel();
                 AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);

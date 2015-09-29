@@ -61,7 +61,6 @@ public class Video {
     public void crearFrameSample(){
         //make sure that the image exists. If not, create one with the first video image
         int imgId = auxiliar.existeImagen(this.imagen);
-        Log.e("FRAMSE_SAMPLE", "img id " + imgId);
         if(imgId == 0){ //img was not found
           auxiliar.crearImagen(this,context);//create image sample
         }
