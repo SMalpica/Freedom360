@@ -56,6 +56,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -96,6 +97,8 @@ public class GaleriaPrincipal extends Activity {
 //    private ArrayList<Video> lista;                 //list with the gallery's video
     private ListView lv;                            //listview with the gallery elements
     public boolean esTablet;                        //true if the device is a tablet (i.e: screen is bigger than 5')
+    private ProgressDialog progreso;
+    private AlertDialog.Builder badURLbuilder;
 
     @Override
     @TargetApi(21)
@@ -152,169 +155,25 @@ public class GaleriaPrincipal extends Activity {
         lv.setPadding(0, 0, 0, 0);
         lv.setVerticalScrollBarEnabled(false);
         lv.setDivider(null);
-        /*//set each item's click listener
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("MOTION", "child clicked");
-                Video video = lista.get(position);
-                if (!video.getImagen().equalsIgnoreCase("mas")) {
-                    Intent intent = new Intent(GaleriaPrincipal.this, TouchActivity.class);
-                    //send the URI
-                    intent.putExtra("TITULO", video.getImagen());
-                    intent.putExtra("PATH", video.getPath());
-                    intent.putExtra("TIME", 0);
-                    intent.putExtra("STATUS", true);
-                    intent.putExtra("MODE", 0);
-                    startActivity(intent);
-                } else {
-                    LayoutInflater layoutInflater = LayoutInflater.from(GaleriaPrincipal.this);
-                    //inflate the dialog view
-                    View promptView = layoutInflater.inflate(R.layout.popup, null);
-
-                    final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GaleriaPrincipal.this);
-
-                    // set prompts.xml to be the layout file of the alertdialog builder
-                    alertDialogBuilder.setView(promptView);
-
-                    final EditText enlace = (EditText) promptView.findViewById(R.id.enlaceDescarga);
-//                  used:    http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
-                    enlace.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (enlace.getText().toString().contains("insert video URL")) {
-                                enlace.setText("");
-                            }
-                            Log.d("TEXTO", enlace.getText().toString());
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                        }
-                    });
-
-                    // setup a dialog window
-                    alertDialogBuilder
-                            .setTitle(R.string.titulo_popup)
-                                    //start download when "ok" is pressed
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    // get user input and set it to result
-                                    InputMethodManager imm = (InputMethodManager) GaleriaPrincipal.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    imm.showSoftInput(enlace, InputMethodManager.SHOW_IMPLICIT);
-                                    String path = enlace.getText().toString();
-                                    try {
-                                        //method for download found in http://www.insdout.com/
-                                        // snippets/descargar-archivos-desde-una-url-en-nuestra-aplicacion-android.htm
-                                        if (!path.startsWith("http://") && !path.startsWith("https://") && !path.startsWith("ftp://")) {
-                                            path = "http://" + path;
-                                        }
-                                        URL url = new URL(path);
-                                        videoDownloader = new AsyncVideoDownloader();
-                                        videoDownloader.execute(url);
-                                    } catch (MalformedURLException ex) {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
-                                        builder.setTitle("Error. Bad URL. Make sure you use a valid format (ie: \"http://url.com\", or \"url.com\")")
-                                                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.cancel();
-                                                        InputMethodManager imm = (InputMethodManager) GaleriaPrincipal.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                        if (imm.isActive()) {
-                                                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                                                        }
-                                                    }
-                                                });
-                                        AlertDialog d = builder.create();
-                                        d.show();
-                                        Log.e("ON_CLICK", "malformedURL");
-                                    }
-                                }
-                            })//dismiss the dialog when cancel is pressed
-                            .setNegativeButton("Cancel",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-                    // create an alert dialog
-                    AlertDialog alertD = alertDialogBuilder.create();
-                    alertD.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-                    alertD.show();
-                }
-            }
-        });*/
-        /*//set item's onLongClickListeners
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            Video video;
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final int posicion = position;
-                Log.d("MOTION", "child long clicked");
-                video = lista.get(position);
-                //item mas opens a dialog for downloads if long clicked
-                if (video.getImagen().equalsIgnoreCase("mas")) {
-
-                    return true;
-                } else {  //other items open a dialog to be deleted when long clicked
-                    //except for the two default videos
-                    if (!video.getImagen().equalsIgnoreCase("predef1") && !video.getImagen().equalsIgnoreCase("predef2")) {
-                        final File archivo = new File(auxiliar.directorio, video.getImagen());
-                        if (archivo.exists()) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
-                            builder.setTitle("Are you sure you want to delete " + video.getImagen() + "?")
-                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            lista.remove(posicion);
-                                            archivo.delete();
-                                            File imagen = auxiliar.obtenerArchivoImagen(video.getImagen());
-                                            imagen.delete();
-                                            videoAdapter.notifyDataSetChanged();
-                                            dialog.cancel();
-                                        }
-                                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                            AlertDialog d = builder.create();
-                            d.show();
-                            return true;
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
-                            builder.setTitle("File " + video.getImagen() + " can't be deleted. Delete Manually.")
-                                    .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.cancel();
-                                        }
-                                    });
-                            AlertDialog d = builder.create();
-                            d.show();
-                            Log.e("ON_LONG_CLICK", "video no encontrado");
-                            return true;
-                        }
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
-                        builder.setTitle("File " + video.getImagen() + " is a default sample video and can't be deleted")
-                                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog d = builder.create();
-                        d.show();
-                        Log.e("ON_LONG_CLICK", "video predefinido no se puede borrar");
-                        return true;
-                    }
-                }
-            }
-        });*/
         //set listview's adapter
         videoAdapter = new VideoAdapter(getApplicationContext(), lista);
         lv.setAdapter(videoAdapter);
+        iniciarBuilders();
+    }
+
+    private void iniciarBuilders(){
+        badURLbuilder = new AlertDialog.Builder(GaleriaPrincipal.this);
+        badURLbuilder.setTitle("Error. Bad URL. Make sure you use a valid format (ie: \"http://url.com\", or \"url.com\")")
+                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        InputMethodManager imm = (InputMethodManager) GaleriaPrincipal.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm.isActive()) {
+                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                        }
+                    }
+                });
     }
 
     /*searches for the downloaded videos to fill the app gallery*/
@@ -348,6 +207,29 @@ public class GaleriaPrincipal extends Activity {
         return salida;
     }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        if(progreso!=null && progreso.isShowing()){
+            progreso.dismiss();
+            progreso = null;
+        }
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        if(progreso!=null && progreso.isShowing()){
+            progreso.dismiss();
+            progreso = null;
+        }
+    }
 /**
  * Autor: Sandra Malpica Mallo
  *
@@ -396,14 +278,16 @@ public class GaleriaPrincipal extends Activity {
                 holder = new ViewHolder();
                 holder.imageView = (ImageView) convertView.findViewById(R.id.miniatura);
                 convertView.setTag(holder);
+
             }else{
                 holder = (ViewHolder)convertView.getTag();
             }
+            holder.position=posicion;
             holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     Log.d("MOTION", "child long clicked");
-                    final Video video = list.get(posicion);
+//                    final Video video = list.get(posicion);
                     //item mas opens a dialog for downloads if long clicked
                     if (video.getImagen().equalsIgnoreCase("mas")) {
                         LayoutInflater layoutInflater = LayoutInflater.from(GaleriaPrincipal.this);
@@ -423,7 +307,6 @@ public class GaleriaPrincipal extends Activity {
                                 if (enlace.getText().toString().contains("insert video URL")) {
                                     enlace.setText("");
                                 }
-                                Log.e("TEXTO", enlace.getText().toString());
                                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                             }
@@ -539,7 +422,7 @@ public class GaleriaPrincipal extends Activity {
                 @Override
                 public void onClick(View v) {
                     Log.e("MOTION", "child clicked");
-                    Video video = list.get(posicion);
+//                    Video video = list.get(posicion);
                     if (!video.getImagen().equalsIgnoreCase("mas")) {
 //                    Intent intent = new Intent(GaleriaPrincipal.this, MainActivity.class);
                         Intent intent = new Intent(GaleriaPrincipal.this, TouchActivity.class);
@@ -599,19 +482,7 @@ public class GaleriaPrincipal extends Activity {
                                                 i.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, InputMethodManager.HIDE_IMPLICIT_ONLY);
                                             }
                                         } catch (MalformedURLException ex) {
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
-                                            builder.setTitle("Error. Bad URL. Make sure you use a valid format (ie: \"http://url.com\", or \"url.com\")")
-                                                    .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.cancel();
-                                                            InputMethodManager imm = (InputMethodManager) GaleriaPrincipal.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                            if (imm.isActive()) {
-                                                                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                                                            }
-                                                        }
-                                                    });
-                                            AlertDialog d = builder.create();
+                                            AlertDialog d = badURLbuilder.create();
                                             d.show();
                                             Log.e("ON_CLICK", "malformedURL");
                                         }
@@ -637,7 +508,7 @@ public class GaleriaPrincipal extends Activity {
             if(punto != -1){
                 nombre = video.getImagen().substring(0, punto);
             }
-            //get the image id
+            //get the image id and set imageView resource
             int id = contexto.getResources().getIdentifier(nombre, "drawable", contexto.getPackageName());
             if(id!=0){
                 holder.imageView.setImageResource(id);
@@ -652,13 +523,9 @@ public class GaleriaPrincipal extends Activity {
 //                    holder.imageView.setBackgroundColor();
                 }
             }else{
-                File archivoImagen = auxiliar.obtenerArchivoImagen(video.getImagen());
-                if(archivoImagen.exists()){
-                    holder.imageView.setImageURI(Uri.parse(archivoImagen.getAbsolutePath()));
-                    holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//                    holder.imageView.setBackgroundColor(Color.TRANSPARENT);
-                    holder.imageView.setPadding(0, 0, 0, 0);
-                }
+                holder.imageView.setImageResource(R.drawable.sinimagen);
+                AsyncImageLoader imageLoader = new AsyncImageLoader(posicion,holder,video.getImagen());
+                imageLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
             }
             //set scale type and return the view
             if(!video.getImagen().equalsIgnoreCase("mas")) holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -670,6 +537,7 @@ public class GaleriaPrincipal extends Activity {
 
     public static class ViewHolder{
         public ImageView imageView;
+        public int position;
     }
 
     /**
@@ -682,7 +550,6 @@ public class GaleriaPrincipal extends Activity {
      * Comments: async task used to download the videos of the app.
      */
     public class AsyncVideoDownloader extends AsyncTask<URL,Integer,String>{
-        private ProgressDialog progreso;
         private boolean error;
         @Override
         protected void onPreExecute() {
@@ -692,7 +559,8 @@ public class GaleriaPrincipal extends Activity {
             progreso.setTitle("Downloading...");
             progreso.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             progreso.setIndeterminate(false);
-            progreso.show();
+            if(progreso!=null && !GaleriaPrincipal.this.isFinishing())progreso.show();
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
         protected String doInBackground(URL... params){
@@ -738,13 +606,13 @@ public class GaleriaPrincipal extends Activity {
                         return "";
                     }else{
                         error=true;
-                        progreso.cancel();
+                        if(progreso!=null) progreso.cancel();
                     }
 
                 }catch(IOException ex){
                     Log.e("ON_CLICK_ERROR",ex.getMessage());
                     error=true;
-                    progreso.cancel();
+                    if(progreso!=null) progreso.cancel();
                 }
 
             }
@@ -753,7 +621,7 @@ public class GaleriaPrincipal extends Activity {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            progreso.setProgress(values[0]);
+            if(progreso!=null && !GaleriaPrincipal.this.isFinishing()) progreso.setProgress(values[0]);
 
         }
 
@@ -765,10 +633,10 @@ public class GaleriaPrincipal extends Activity {
                 video.setURL(result);
                 video.crearFrameSample();
                 videoAdapter.list=fillData(getApplicationContext());
-                videoAdapter.list.add(0, video);
+//                videoAdapter.list.add(0, video);
                 lv.setSelection(0);
                 videoAdapter.notifyDataSetChanged();
-                progreso.cancel();
+                if(progreso!=null) progreso.cancel();
                 AlertDialog.Builder builder = new AlertDialog.Builder(GaleriaPrincipal.this);
                 builder.setTitle("Download successful. The frame sample will appear when gallery is refreshed.")
                         .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
@@ -792,11 +660,42 @@ public class GaleriaPrincipal extends Activity {
                 AlertDialog d = builder.create();
                 d.show();
                 Log.e("BACK_DOWNLOAD", "error while downloading video");
-                if(progreso.isShowing()){
+                if(progreso!=null && progreso.isShowing()){
                     progreso.cancel();
                 }
             }
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
 
+    public class AsyncImageLoader extends AsyncTask<String,Integer,Uri>{
+        private int mPosition;
+        private ViewHolder holder;
+        private String nombre;
+
+        public AsyncImageLoader (int position, ViewHolder h,String nombreVideo){
+            this.mPosition=position;
+            this.holder=h;
+            this.nombre=nombreVideo;
+        }
+
+        @Override
+        protected Uri doInBackground(String... arg0) {
+            // Download bitmap here
+            File archivoImagen = auxiliar.obtenerArchivoImagen(nombre);
+            if(archivoImagen.exists()){
+                return Uri.parse(archivoImagen.getAbsolutePath());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Uri uri) {
+            if (holder.position == mPosition) {
+                holder.imageView.setImageURI(uri);
+                holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                holder.imageView.setPadding(0, 0, 0, 0);
+            }
         }
     }
 }

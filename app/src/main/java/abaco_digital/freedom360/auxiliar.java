@@ -117,7 +117,7 @@ public class auxiliar {
                     Bitmap mitad = Bitmap.createBitmap(bmp,(int)(originalWidth/2 - originalHeight/2),0,(int)originalHeight,(int)originalHeight);
                     //scale the bitmap
                     Bitmap escalado = Bitmap.createScaledBitmap(mitad,width,height,false);
-                    escalado.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    escalado.compress(Bitmap.CompressFormat.JPEG, 50, out);
                     out.flush();
                     out.close(); //close the stream
                     //store the image
